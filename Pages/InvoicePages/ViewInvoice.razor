@@ -5,14 +5,9 @@
 @inject NavigationManager NavigationManager
 
 <h3>@invoice.VendorName #@invoice.InvoiceNumber</h3>
-
-<Tabs SelectedTab="@selectedTab" SelectedTabChanged="@OnSelectedTabChanged">
-    <Items>
-        <Tab Name="invInfo">Invoice Info</Tab>
-        <Tab Name="items">Items</Tab>
-    </Items>
-    <Content>
-        <TabPanel Name="invInfo">
+<RadzenTabs>
+    <Tabs>
+        <RadzenTabsItem Text="Invoice Info">
             <h5>Invoice Number:</h5>
             <p>@invoice.InvoiceNumber</p>
             <br />
@@ -21,13 +16,12 @@
             <br />
             <h5>Invoice Date:</h5>
             <p>@invoice.Date</p>
-
-        </TabPanel>
-        <TabPanel Name="items">
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Items" >
             This is where items are entered.
-        </TabPanel>
-    </Content>
-</Tabs>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
 
 <button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
 <button class="btn btn-danger" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
@@ -65,15 +59,5 @@
     private async Task Cancel()
     {
         NavigationManager.NavigateTo("/invoices");
-    }
-
-    //Tabs code
-    string selectedTab = "invInfo";
-
-    private Task OnSelectedTabChanged( string name )
-    {
-        selectedTab = name;
-
-        return Task.CompletedTask;
     }
 }

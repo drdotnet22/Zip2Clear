@@ -20,6 +20,7 @@
             <p>@declaration.BOLnumber</p>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Invoices">
+            
             <table class="table">
 		        <thead>
 			        <tr>
@@ -50,43 +51,6 @@
                     }
                 </tbody>
             </table>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="Items">
-            @*<RadzenDataGrid @ref="itemsGrid" TItem="Item" Data="@items" 
-                AllowFiltering="true" FilterMode="FilterMode.Simple" 
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
-                PageSize="25" AllowPaging="true" AllowSorting="true" AllowColumnResize="true"
-                RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
-                <Columns>
-                    <RadzenDataGridColumn TItem="Item" Property="InvoiceNumber" Title="Invoice Number">
-                        <EditTemplate>
-                            <RadzenTextBox  Style="width:100%; display:block" Name="InvoiceNumber" />
-                        </EditTemplate>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Item" Property="Department" Title="Department" />
-                    <RadzenDataGridColumn TItem="Item" Property="Quantity" Title="Qnty" />
-                    <RadzenDataGridColumn TItem="Item" Property="Description" Title="Description" />
-                    <RadzenDataGridColumn TItem="Item" Property="Value" Title="Value" FormatString="{0:C}"/>
-                    <RadzenDataGridColumn TItem="Item" Property="Weight" Title="Weight" />
-                    <RadzenDataGridColumn TItem="Item" Property="HsCode" Title="Tarriff Code" />
-                    <RadzenDataGridColumn TItem="Item" Property="DutyGeneralRate" Title="General Rate" FormatString="{00:P}" />
-                    <RadzenDataGridColumn TItem="Item" Property="DutyExciseRate" Title="Excise Rate" />
-                    <RadzenDataGridColumn TItem="Item" Sortable="false" >
-                        <Template Context="item">
-                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Click="@(args => EditRow(item))" @onclick:stopPropagation="true" />
-                        </Template>
-                        <EditTemplate Context="item">
-                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" class="m-1" Click="@((args) => SaveRow(item))">
-                            </RadzenButton>
-                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" class="m-1" Click="@((args) => CancelEdit(item))" >
-                            </RadzenButton>
-                        </EditTemplate>
-                    </RadzenDataGridColumn>
-                    <RadzenGridColumn TItem="Item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px" >
-                        <!--this is where I left off-->
-                    </RadzenGridColumn>
-                </Columns>
-            </RadzenDataGrid>*@
         </RadzenTabsItem>
     </Tabs>
 </RadzenTabs>
@@ -215,14 +179,4 @@
         dbContext.SaveChanges();
     }
     #endregion
-
-    //Tabs code
-    string selectedTab = "header";
-
-    private Task OnSelectedTabChanged( string name )
-    {
-        selectedTab = name;
-        return Task.CompletedTask;
-    }
-
 }

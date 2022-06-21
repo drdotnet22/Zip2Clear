@@ -6,41 +6,37 @@
 
 <h3>@invoice.VendorName #@invoice.InvoiceNumber</h3>
 
-<Tabs SelectedTab="@selectedTab" SelectedTabChanged="@OnSelectedTabChanged">
-    <Items>
-        <Tab Name="invInfo">Invoice Info</Tab>
-        <Tab Name="items">Items</Tab>
-    </Items>
-    <Content>
-        <TabPanel Name="invInfo">
+<RadzenTabs>
+    <Tabs>
+        <RadzenTabsItem Text="Invoice Info">
             <br />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Invoice Number:</span>
                 </div>
-                <input class="form-control" @bind="invoice.InvoiceNumber" />  
+                <input class="form-control" @bind="invoice.InvoiceNumber" />
             </div>
             <br />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Vendor:</span>
                 </div>
-                <input class="form-control" @bind="invoice.VendorName" />  
+                <input class="form-control" @bind="invoice.VendorName" />
             </div>
             <br />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Invoice Date:</span>
                 </div>
-                <RadzenDatePicker TValue="DateTime?" Date="DateTime.Now" @bind-value="invoice.Date"/>  
+                <RadzenDatePicker TValue="DateTime?" Date="DateTime.Now" @bind-value="invoice.Date" />
             </div>
             <br />
-        </TabPanel>
-        <TabPanel Name="items">
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Items">
             This is where items are entered.
-        </TabPanel>
-    </Content>
-</Tabs>
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
 
 <button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
 <button class="btn btn-danger" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
@@ -78,15 +74,5 @@
     private async Task Cancel()
     {
         NavigationManager.NavigateTo("/invoices");
-    }
-
-    //Tabs code
-    string selectedTab = "invInfo";
-
-    private Task OnSelectedTabChanged( string name )
-    {
-        selectedTab = name;
-
-        return Task.CompletedTask;
     }
 }
