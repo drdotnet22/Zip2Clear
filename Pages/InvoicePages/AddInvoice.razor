@@ -1,0 +1,69 @@
+﻿@page "/invoices/add"
+
+@using Zip2Clear.Data
+
+@inject InvoiceServices service
+
+<h3>New Invoice</h3>
+<br/>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">Invoice Number:</span>
+    </div>
+    <input class="form-control" @ref="firstEle" @bind="NewInvoice.InvoiceNumber" />  
+</div>
+<br />
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">Vendor:</span>
+    </div>
+    <input class="form-control" @bind="NewInvoice.VendorName" />
+</div>
+<br />
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">Invoice Date:</span>
+    </div>
+    <RadzenDatePicker TValue="DateTime?" Date="DateTime.Now" @bind-value="NewInvoice.Date"/>  
+</div>
+<br />
+<br />
+<a tabindex="0" class="btn btn-info" @onclick="AddNewInvoice" href="/invoices"> Save Invoice</a>
+<a tabindex="0" href="/invoices" class="btn btn-secondary">Cancel</a>
+
+
+
+
+        
+@code {
+    private ElementReference firstEle;
+
+    List<Invoice> Invoices = new List<Invoice>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshInvoices();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await firstEle.FocusAsync();
+        }
+    }
+
+    private async Task RefreshInvoices()
+    {
+        Invoices = await service.GetInvoiceAsync();
+    }
+
+    public Invoice NewInvoice { get; set; } = new Invoice();
+    private async Task AddNewInvoice()
+    {
+        NewInvoice.Id = Guid.NewGuid();
+        await service.AddInvoiceAsync(NewInvoice);
+        NewInvoice = new Invoice();
+        await RefreshInvoices();
+    }
+}

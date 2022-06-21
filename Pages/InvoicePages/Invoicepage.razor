@@ -1,0 +1,90 @@
+﻿@page "/invoices"
+
+@using Zip2Clear.Data
+
+@inject NavigationManager NavigationManager
+
+<h2>Invoices</h2>
+<p>
+    <a href="/invoices/add">Create New</a>
+</p>
+
+<table class="table">
+		<thead>
+			<tr>
+				<th>Invoice Number</th>
+				<th>Invoice Date</th>
+				<th>Vendor</th>
+				<th>Total</th>
+                <th></th>
+			</tr>
+		</thead>
+		<tbody>
+                @if (Invoices.Any())
+                {
+                    @foreach (var invoice in Invoices)
+                    {
+                        <tr>
+                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.InvoiceNumber</td>
+                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.Date</td>
+                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.VendorName</td>
+                            <td><button class="btn btn-danger btn-sm" @onclick="(() => DeleteInvoice(invoice))">Delete</button></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6"><strong>No invoices available</strong></td></tr>
+                }
+        </tbody>
+</table>
+<div>
+   
+</div>
+
+
+@code {
+    [Inject]
+    public InvoiceServices service { get; set; }
+    
+    private List<Invoice> Invoices;
+    private Invoice selectedInvoice;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Invoices = await service.GetInvoiceAsync();
+        await base.OnInitializedAsync();
+        await RefreshInvoices();
+    }
+
+    private async Task RefreshInvoices()
+    {
+        Invoices = await service.GetInvoiceAsync();
+    }
+
+    Invoice UpdateInvoice = new Invoice();
+
+    private void SetInvoiceForUpdate(Invoice invoice)
+    {
+        UpdateInvoice = invoice;
+        
+    }
+    
+    private async Task UpdateInvoiceData()
+    {
+        await service.UpdateInvoiceAsync(UpdateInvoice);
+        await RefreshInvoices();
+    }
+
+    private async Task DeleteInvoice(Invoice invoice)
+    {
+        await service.DeleteInvoiceAsync(invoice);
+        await RefreshInvoices();
+    } 
+    
+    private void ViewInvoice(Invoice invoice)
+    {
+        string invoiceId = invoice.Id.ToString();
+        NavigationManager.NavigateTo($"/invoices/{invoiceId}");
+    }
+}

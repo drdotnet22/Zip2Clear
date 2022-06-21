@@ -1,0 +1,53 @@
+﻿@page "/vendors"
+
+@using Zip2Clear.Data
+
+<h3>VendorList</h3>
+<br/>
+<a href="/vendors/new">New</a>
+<br />
+<table class="table table-sm">
+		<thead>
+			<tr>
+				<th>Vendor</th>
+				<th>Address</th>
+                <th>City</th>
+                <th>Postal Code</th>
+                <th>Country</th>
+			</tr>
+		</thead>
+		<tbody>
+                @if (Vendors.Any())
+                {
+                    @foreach (var vendor in Vendors)
+                    {
+                        <tr>
+                            <td >@vendor.VendorName</td>
+                            <td>@vendor.VendorAddressLine</td>
+                            <td>@vendor.VendorCityName</td>
+                            <td>@vendor.VendorPostalCode</td>
+                            <td>@vendor.VendorCountryCode</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6"><strong>No vendors available</strong></td></tr>
+                }
+        </tbody>
+</table>
+
+@code {
+    [Inject]
+    public VendorServices vendorService { get; set; }
+    
+    public List<Vendor> Vendors { get; set; }
+    private Vendor selectedVendor;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Vendors = await vendorService.GetVendorAsync();
+        await base.OnInitializedAsync();
+    }
+
+}

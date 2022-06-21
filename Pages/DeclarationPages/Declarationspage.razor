@@ -1,0 +1,83 @@
+﻿@page "/declarations"
+
+@using Zip2Clear.Data
+
+@inject NavigationManager NavigationManager
+
+<h3>Declarations</h3>
+
+<table class="table">
+		<thead>
+			<tr>
+				<th>Declaration Number</th>
+                <th>Bill of Lading Number</th>
+				<th>DeclarationType</th>
+				<th>Submitted Date</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+                @if (declarationList.Any())
+                {
+                    @foreach (var declaration in declarationList)
+                    {
+                        <tr @onclick="(() => ViewDeclaration(declaration))">
+                            <td>@declaration.DeclarationNumber</td>
+                            <td>@declaration.BOLnumber</td>
+                            <td>@declaration.DeclarationType</td>
+                            <td>@declaration.declarationSubmittedDate</td>
+                            <td>@declaration.Status</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6"><strong>No declarations available</strong></td></tr>
+                }
+        </tbody>
+</table>
+
+@code {
+    [Inject]
+    public DeclarationServices service { get; set; }
+    
+    private List<Declaration> declarationList;
+    private Declaration selectedDeclaration;
+
+    protected override async Task OnInitializedAsync()
+    {
+        declarationList = await service.GetDeclarationAsync();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshDeclarations()
+    {
+        declarationList = await service.GetDeclarationAsync();
+    }
+
+    Declaration UpdateDeclaration = new Declaration();
+
+    private void SetDeclarationForUpdate(Declaration declaration)
+    {
+        UpdateDeclaration = declaration;
+        
+    }
+    
+    private async Task UpdateDeclarationData()
+    {
+        await service.UpdateDeclarationAsync(UpdateDeclaration);
+        await RefreshDeclarations();
+    }
+
+    private async Task DeleteDeclaration(Declaration declaration)
+    {
+        await service.DeleteDeclarationAsync(declaration);
+        await RefreshDeclarations();
+    } 
+    
+    private void ViewDeclaration(Declaration declaration)
+    {
+        string declarationId = declaration.Id.ToString();
+        NavigationManager.NavigateTo($"/declarations/{declarationId}");
+    }
+}

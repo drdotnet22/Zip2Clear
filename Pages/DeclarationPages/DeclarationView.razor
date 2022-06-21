@@ -1,0 +1,228 @@
+﻿@page "/declarations/{declarationId}"
+
+@using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject DeclarationServices declarationService
+@inject InvoiceServices invoiceService
+@inject ItemServices itemService
+@inject MyDbContext dbContext
+
+<h3>DeclarationView</h3>
+
+<RadzenTabs>
+    <Tabs>
+        <RadzenTabsItem Text="Header">
+            
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="B/L">
+            <p>@declaration.ManifestNumber</p>
+            <p>@declaration.BOLnumber</p>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Invoices">
+            <table class="table">
+		        <thead>
+			        <tr>
+				        <th>Invoice Number</th>
+				        <th>Invoice Date</th>
+				        <th>Vendor</th>
+                        <th>S/H</th>
+                        <th>B/L freight</th>
+			        </tr>
+		        </thead>
+		        <tbody>
+                    @if (invoices.Any())
+                    {
+                        @foreach (var invoice in invoices)
+                        {
+                            <tr>
+                                <td>@invoice.InvoiceNumber</td>
+                                <td>@invoice.Date</td>
+                                <td>@invoice.VendorName</td>
+                                <td>$@invoice.FreightValue</td>
+                                <td>$@invoice.InsuranceValue</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6"><strong>No invoices available</strong></td></tr>
+                    }
+                </tbody>
+            </table>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Items">
+            @*<RadzenDataGrid @ref="itemsGrid" TItem="Item" Data="@items" 
+                AllowFiltering="true" FilterMode="FilterMode.Simple" 
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.Or"
+                PageSize="25" AllowPaging="true" AllowSorting="true" AllowColumnResize="true"
+                RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Item" Property="InvoiceNumber" Title="Invoice Number">
+                        <EditTemplate>
+                            <RadzenTextBox  Style="width:100%; display:block" Name="InvoiceNumber" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Item" Property="Department" Title="Department" />
+                    <RadzenDataGridColumn TItem="Item" Property="Quantity" Title="Qnty" />
+                    <RadzenDataGridColumn TItem="Item" Property="Description" Title="Description" />
+                    <RadzenDataGridColumn TItem="Item" Property="Value" Title="Value" FormatString="{0:C}"/>
+                    <RadzenDataGridColumn TItem="Item" Property="Weight" Title="Weight" />
+                    <RadzenDataGridColumn TItem="Item" Property="HsCode" Title="Tarriff Code" />
+                    <RadzenDataGridColumn TItem="Item" Property="DutyGeneralRate" Title="General Rate" FormatString="{00:P}" />
+                    <RadzenDataGridColumn TItem="Item" Property="DutyExciseRate" Title="Excise Rate" />
+                    <RadzenDataGridColumn TItem="Item" Sortable="false" >
+                        <Template Context="item">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Click="@(args => EditRow(item))" @onclick:stopPropagation="true" />
+                        </Template>
+                        <EditTemplate Context="item">
+                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" class="m-1" Click="@((args) => SaveRow(item))">
+                            </RadzenButton>
+                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" class="m-1" Click="@((args) => CancelEdit(item))" >
+                            </RadzenButton>
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenGridColumn TItem="Item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px" >
+                        <!--this is where I left off-->
+                    </RadzenGridColumn>
+                </Columns>
+            </RadzenDataGrid>*@
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+
+@code {
+    [Parameter]
+    public string? declarationId { get; set; }
+
+    //Declaration
+    private List<Declaration> declarationList;
+    public Declaration declaration;
+
+    //Invoice
+    private List<Invoice> Invoices;
+    public List<Invoice> invoices;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        declarationList = await declarationService.GetDeclarationAsync();
+        await base.OnInitializedAsync();
+        await LoadDeclarationAsync();
+        await RefreshInvoices();
+        await RefreshItems();
+    }
+
+    private async Task LoadDeclarationAsync()
+    {
+        declaration = declarationList.FirstOrDefault(d => d.Id.ToString() == declarationId);
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task RefreshInvoices()
+    {
+        Invoices = await invoiceService.GetInvoiceAsync();
+        invoices = Invoices.Where(i => i.Declaration == declaration).ToList();
+    }
+
+    #region Item Grid
+    RadzenDataGrid<Item> itemsGrid;
+    IList<Item> items;
+
+    private async Task RefreshItems()
+    {
+        items = dbContext.Item.Where(i => i.DeclarationNumber == declaration.DeclarationNumber).ToList();
+    }
+
+    async Task EditRow(Item item)
+    {
+        await itemsGrid.EditRow(item);
+    }
+
+    void OnUpdateRow(Item item)
+    {
+        if (item == itemToInsert)
+        {
+            itemToInsert = null;
+        }
+
+        dbContext.Update(item);
+
+        dbContext.SaveChanges();
+    }
+
+    async Task SaveRow(Item order)
+    {
+        if (order == itemToInsert)
+        {
+            itemToInsert = null;
+        }
+
+        await itemsGrid.UpdateRow(order);
+    }
+
+    void CancelEdit(Item order)
+    {
+        if (order == itemToInsert)
+        {
+            itemToInsert = null;
+        }
+
+        itemsGrid.CancelEditRow(order);
+
+        // For production
+        var orderEntry = dbContext.Entry(order);
+        if (orderEntry.State == EntityState.Modified)
+        {
+            orderEntry.CurrentValues.SetValues(orderEntry.OriginalValues);
+            orderEntry.State = EntityState.Unchanged;
+        }
+    }
+
+    async Task DeleteRow(Item item)
+    {
+        if (item == itemToInsert)
+        {
+            itemToInsert = null;
+        }
+
+        if (items.Contains(item))
+        {
+            dbContext.Remove<Item>(item);
+
+            dbContext.SaveChanges();
+
+            await itemsGrid.Reload();
+        }
+        else
+        {
+            itemsGrid.CancelEditRow(item);
+        }
+    }
+
+    Item itemToInsert;
+
+    async Task InsertRow()
+    {
+        itemToInsert = new Item();
+        await itemsGrid.InsertRow(itemToInsert);
+    }
+
+    void OnCreateRow(Item item)
+    {
+        dbContext.Add(item);
+
+        dbContext.SaveChanges();
+    }
+    #endregion
+
+    //Tabs code
+    string selectedTab = "header";
+
+    private Task OnSelectedTabChanged( string name )
+    {
+        selectedTab = name;
+        return Task.CompletedTask;
+    }
+
+}

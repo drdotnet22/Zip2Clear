@@ -1,0 +1,79 @@
+﻿@page "/invoices/{InvoiceId}"
+
+@using Zip2Clear.Data
+
+@inject NavigationManager NavigationManager
+
+<h3>@invoice.VendorName #@invoice.InvoiceNumber</h3>
+
+<Tabs SelectedTab="@selectedTab" SelectedTabChanged="@OnSelectedTabChanged">
+    <Items>
+        <Tab Name="invInfo">Invoice Info</Tab>
+        <Tab Name="items">Items</Tab>
+    </Items>
+    <Content>
+        <TabPanel Name="invInfo">
+            <h5>Invoice Number:</h5>
+            <p>@invoice.InvoiceNumber</p>
+            <br />
+            <h5>Vendor:</h5>
+            <p>@invoice.VendorName</p>
+            <br />
+            <h5>Invoice Date:</h5>
+            <p>@invoice.Date</p>
+
+        </TabPanel>
+        <TabPanel Name="items">
+            This is where items are entered.
+        </TabPanel>
+    </Content>
+</Tabs>
+
+<button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
+<button class="btn btn-danger" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
+
+@code {
+    [Parameter]
+    public string InvoiceId { get; set; }
+
+    [Inject]
+    public InvoiceServices service { get; set; }
+
+    private List<Invoice> Invoices;
+    public Invoice invoice { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Invoices = await service.GetInvoiceAsync();
+        await base.OnInitializedAsync();
+        await LoadInvoiceAsync();
+    }
+
+    private async Task LoadInvoiceAsync()
+    {
+
+        invoice = Invoices.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task DeleteInvoice(Invoice invoice)
+    {
+        await service.DeleteInvoiceAsync(invoice);
+        NavigationManager.NavigateTo("/invoices");
+    } 
+
+    private async Task Cancel()
+    {
+        NavigationManager.NavigateTo("/invoices");
+    }
+
+    //Tabs code
+    string selectedTab = "invInfo";
+
+    private Task OnSelectedTabChanged( string name )
+    {
+        selectedTab = name;
+
+        return Task.CompletedTask;
+    }
+}
