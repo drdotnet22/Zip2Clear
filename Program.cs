@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using Zip2Clear.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,9 @@ builder.Services.AddScoped<DeclarationServices>();
 builder.Services.AddScoped<InvoiceServices>();
 builder.Services.AddScoped<ItemServices>();
 builder.Services.AddScoped<VendorServices>();
+
+// Radzen components
+builder.Services.AddScoped<DialogService>();
 
 var app = builder.Build();
 

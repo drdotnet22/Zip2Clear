@@ -1,0 +1,27 @@
+﻿@page "/invoices/unassigned/{declarationId}"
+
+@using Microsoft.EntityFrameworkCore
+@using Zip2Clear.Data
+
+@inject Radzen.DialogService DialogService
+@inject Zip2Clear.Data.MyDbContext dbContext
+@inject DeclarationServices declarationService
+
+<h3>Unassigned Invoices</h3>
+
+
+@code {
+    [Parameter] public string? declarationId { get; set; }
+
+    public Declaration declaration;
+    private List<Declaration> Declarations;
+    IEnumerable<Invoice> unassignedInvoices;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Declarations = await declarationService.GetDeclarationAsync();
+        declaration = Declarations.FirstOrDefault(d => d.DeclarationNumber == declarationId);
+        unassignedInvoices = dbContext.Invoice.Where(i => i.Declaration == declaration).ToList();
+        base.OnInitializedAsync();
+    }
+}

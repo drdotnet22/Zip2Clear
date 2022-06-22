@@ -2,11 +2,13 @@
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
+@using Radzen
 
 @inject DeclarationServices declarationService
 @inject InvoiceServices invoiceService
 @inject ItemServices itemService
 @inject MyDbContext dbContext
+@inject DialogService DialogService
 
 <h3>DeclarationView</h3>
 
@@ -20,7 +22,7 @@
             <p>@declaration.BOLnumber</p>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Invoices">
-            
+            <RadzenButton Text="Open Invoice List" ButtonStyle="ButtonStyle.Secondary" Click=@OpenInvoiceList />
             <table class="table">
 		        <thead>
 			        <tr>
@@ -88,6 +90,26 @@
         Invoices = await invoiceService.GetInvoiceAsync();
         invoices = Invoices.Where(i => i.Declaration == declaration).ToList();
     }
+
+    #region Dialog
+    public void Dispose()
+    {
+        // The DialogService is a singleton so it is advisable to unsubscribe.
+        DialogService.OnOpen -= Open;
+        DialogService.OnClose -= Close;
+    }
+
+    void Open(string title, Type type, Dictionary<string, object> parameters, DialogOptions options){ }
+
+    void Close(dynamic result){ }
+
+    public async Task OpenInvoiceList()
+    {
+        await DialogService.OpenAsync<Shared.UnassignedInvoices>("Unassigned Invoices",
+               new Dictionary<string, object>() { { "declarationId", declaration.DeclarationNumber } },
+               new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
+    }
+    #endregion
 
     #region Item Grid
     RadzenDataGrid<Item> itemsGrid;
