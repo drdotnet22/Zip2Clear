@@ -3,6 +3,7 @@
 @using Zip2Clear.Data
 
 @inject InvoiceServices service
+@inject MyDbContext dbContext
 
 <h3>New Invoice</h3>
 <br/>
@@ -17,6 +18,10 @@
     <div class="input-group-prepend">
         <span class="input-group-text">Vendor:</span>
     </div>
+    <Autocomplete TItem="Vendor" TValue="string" Data="@vendors" ValueField="@(( vendor ) => vendor.Name)" TextField="@(( vendor ) => vendor.Name)"
+        @bind-SelectedValue=@selectedVendor @bind-SelectedText=@selectedVendorText FreeTyping >
+        <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
+    </Autocomplete>
     @*<input class="form-control" @bind="NewInvoice.Vendor" />*@
 </div>
 <br />
@@ -36,13 +41,21 @@
 
         
 @code {
+    [Inject]
+    public VendorServices vendorService { get; set; }
+
     private ElementReference firstEle;
 
     List<Invoice> Invoices = new List<Invoice>();
+    public IEnumerable<Vendor> vendors;
+    public string selectedVendor { get; set; }
+    public string selectedVendorText { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await RefreshInvoices();
+        vendors = await vendorService.GetVendorAsync();
+        await base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -61,9 +74,15 @@
     public Invoice NewInvoice { get; set; } = new Invoice();
     private async Task AddNewInvoice()
     {
+
         NewInvoice.Id = Guid.NewGuid();
+        NewInvoice.Vendor = vendors.FirstOrDefault(v => v.Name == selectedVendor);
         await service.AddInvoiceAsync(NewInvoice);
-        NewInvoice = new Invoice();
         await RefreshInvoices();
+    }
+
+    void OnVendorChange(dynamic vendor)
+    {
+        NewInvoice.Vendor = vendors.FirstOrDefault(v => v.Name == vendor);
     }
 }

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 using Zip2Clear.Data;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,15 @@ builder.Services.AddScoped<VendorServices>();
 
 // Radzen components
 builder.Services.AddScoped<DialogService>();
+
+// blazorise
+builder.Services
+    .AddBlazorise(options =>
+    {
+        options.Immediate = true;
+    })
+    .AddBootstrapProviders()
+    .AddFontAwesomeIcons();
 
 var app = builder.Build();
 
