@@ -4,7 +4,7 @@
 
 @inject NavigationManager NavigationManager
 
-<h3>@invoice.VendorName #@invoice.InvoiceNumber</h3>
+<h3>@invoice.Vendor.Name #@invoice.InvoiceNumber</h3>
 
 <RadzenTabs>
     <Tabs>
@@ -21,7 +21,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">Vendor:</span>
                 </div>
-                <input class="form-control" @bind="invoice.VendorName" />
+                <input class="form-control" />
             </div>
             <br />
             <div class="input-group">

@@ -7,7 +7,29 @@
 @inject Zip2Clear.Data.MyDbContext dbContext
 @inject DeclarationServices declarationService
 
-<h3>Unassigned Invoices</h3>
+<h6>Declaration Number: @declaration.DeclarationNumber</h6>
+
+<RadzenDataGrid @ref="grid" AllowRowSelectOnRowClick="true" AllowFiltering="true" FilterCaseSensitivity="Radzen.FilterCaseSensitivity.CaseInsensitive" AllowSorting="true" 
+    Data="@unassignedInvoices" TItem="Invoice" 
+    SelectionMode="Radzen.DataGridSelectionMode.Multiple" @bind-Value="@selectedInvoices">
+    <Columns>
+        <RadzenDataGridColumn TItem="Invoice" Filterable="false" Sortable="false">
+            <HeaderTemplate>
+                <RadzenCheckBox TriState="false" TValue="bool" Value="@(unassignedInvoices.Any(i => selectedInvoices != null && selectedInvoices.Contains(i)))"
+                    Change=@(args => selectedInvoices = args ? unassignedInvoices.ToList() : null) />
+            </HeaderTemplate>
+            <Template Context="invoice">
+                <RadzenCheckBox TriState="false" Value="@(selectedInvoices != null && selectedInvoices.Contains(invoice))"
+                TValue="bool" Change=@(args => { grid.SelectRow(invoice); }) />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Invoice" Property="InvoiceNumber" Title="Invoice Number" Sortable="true" Filterable="true" />
+        <RadzenDataGridColumn TItem="Invoice" Property="VendorName" Title="Vendor" Sortable="true" Filterable="true" />
+        <RadzenDataGridColumn TItem="Invoice" Property="Date" Title="Date" Sortable="true" Filterable="true" />
+    </Columns>
+</RadzenDataGrid>
+
+<button class="btn btn-primary" onclick="@UpdateInvoices" >Add Invoices</button>
 
 
 @code {
@@ -16,12 +38,25 @@
     public Declaration declaration;
     private List<Declaration> Declarations;
     IEnumerable<Invoice> unassignedInvoices;
+    IList<Invoice> selectedInvoices;
+    RadzenDataGrid<Invoice> grid;
 
     protected override async Task OnInitializedAsync()
     {
         Declarations = await declarationService.GetDeclarationAsync();
         declaration = Declarations.FirstOrDefault(d => d.DeclarationNumber == declarationId);
-        unassignedInvoices = dbContext.Invoice.Where(i => i.Declaration == declaration).ToList();
+        unassignedInvoices = dbContext.Invoice.Where(i => i.Declaration == null).ToList();
         base.OnInitializedAsync();
+    }
+
+    public async Task UpdateInvoices()
+    {
+        foreach (var invoice in selectedInvoices)
+        {
+            invoice.Declaration = declaration;
+            dbContext.Update(invoice);
+        }
+        await dbContext.SaveChangesAsync();
+        DialogService.Close(true);
     }
 }

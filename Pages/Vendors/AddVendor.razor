@@ -8,42 +8,42 @@
     <div class="input-group-prepend">
         <span class="input-group-text">Vendor Name:</span>
     </div>
-    <input class="form-control" @ref="firstEle" @bind="NewVendor.VendorName" />  
+    <input class="form-control" @ref="firstEle" @bind="NewVendor.Name" />  
 </div>
 <br />
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Address line:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.VendorAddressLine" />
+    <input class="form-control" @bind="NewVendor.AddressLine" />
 </div>
 <br />
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">City:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.VendorCityName" />
+    <input class="form-control" @bind="NewVendor.CityName" />
 </div>
 <br />
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">State:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.VendorState" />  
+    <input class="form-control" @bind="NewVendor.State" />  
 </div>
 <br/>
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Postal code:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.VendorPostalCode" />  
+    <input class="form-control" @bind="NewVendor.PostalCode" />  
 </div>
 <br/>
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Country:</span>
     </div>
-    <input tabindex="1" class="form-control" @bind="NewVendor.VendorCountryCode" />  
+    <input tabindex="1" class="form-control" @bind="NewVendor.CountryCode" />  
 </div>
 <br />
 <a tabindex="0" class="btn btn-info" @onclick="AddNewVendor" href="/vendors"> Save Vendor</a>
@@ -79,7 +79,7 @@
         Vendors = await vendorService.GetVendorAsync();
     }
 
-    public Vendor NewVendor { get; set; } = new Vendor() { VendorCountryCode = "US" };
+    public Vendor NewVendor { get; set; } = new Vendor() { CountryCode = "US" };
     private async Task AddNewVendor()
     {
         NewVendor.Id = Guid.NewGuid();

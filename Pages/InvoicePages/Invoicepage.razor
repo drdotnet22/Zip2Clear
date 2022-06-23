@@ -27,7 +27,7 @@
                         <tr>
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.InvoiceNumber</td>
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.Date</td>
-                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.VendorName</td>
+                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.Vendor?.Name</td>
                             <td><button class="btn btn-danger btn-sm" @onclick="(() => DeleteInvoice(invoice))">Delete</button></td>
                         </tr>
                     }
