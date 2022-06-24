@@ -67,6 +67,7 @@
 
         NewInvoice.Id = Guid.NewGuid();
         NewInvoice.Vendor = vendors.FirstOrDefault(v => v.Name == selectedVendor);
+        NewInvoice.VendorName = selectedVendor;
         NewInvoice.Date = invDate;
         await invoiceService.AddInvoiceAsync(NewInvoice);
     }

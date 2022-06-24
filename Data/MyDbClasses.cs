@@ -40,6 +40,7 @@ namespace Zip2Clear.Data
         public string InvoiceNumber { get; set; }
         public Guid? VendorId { get; set; }
         public Vendor? Vendor { get; set; }
+        public string? VendorName { get; set; }
         public decimal FreightValue { get; set; }
         public decimal InsuranceValue { get; set; }
     }

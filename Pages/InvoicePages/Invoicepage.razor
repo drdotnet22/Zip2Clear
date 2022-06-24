@@ -28,8 +28,11 @@
                         <tr>
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.InvoiceNumber</td>
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.Date</td>
-                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.Vendor?.Name</td>
-                            <td><button class="btn btn-danger btn-sm" @onclick="(() => DeleteInvoice(invoice))">Delete</button></td>
+                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.VendorName</td>
+                            <td width="180px">
+                                <button class="btn btn-secondary btn-sm" @onclick="(() => UpdateInvoice(invoice))">Edit</button>
+                                <button class="btn btn-danger btn-sm" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
+                            </td>
                         </tr>
                     }
                 }
@@ -54,19 +57,11 @@
     {
         Invoices = await invoiceService.GetInvoiceAsync();
     }
-
-    Invoice UpdateInvoice = new Invoice();
-
-    private void SetInvoiceForUpdate(Invoice invoice)
-    {
-        UpdateInvoice = invoice;
-        
-    }
     
-    private async Task UpdateInvoiceData()
+    private async Task UpdateInvoice(Invoice invoice)
     {
-        await invoiceService.UpdateInvoiceAsync(UpdateInvoice);
-        await RefreshInvoices();
+        string invoiceId = invoice.Id.ToString();
+        NavigationManager.NavigateTo($"/invoices/edit/{invoiceId}");
     }
 
     private async Task DeleteInvoice(Invoice invoice)

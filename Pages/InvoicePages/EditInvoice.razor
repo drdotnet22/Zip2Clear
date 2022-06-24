@@ -3,8 +3,9 @@
 @using Zip2Clear.Data
 
 @inject NavigationManager NavigationManager
+@inject InvoiceServices invoiceService
 
-<h3>@invoice.Vendor.Name #@invoice.InvoiceNumber</h3>
+<h3>@invoice.VendorName #@invoice.InvoiceNumber</h3>
 
 <RadzenTabs>
     <Tabs>
@@ -21,14 +22,14 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">Vendor:</span>
                 </div>
-                <input class="form-control" />
+                <input class="form-control" @bind="invoice.VendorName"/>
             </div>
             <br />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Invoice Date:</span>
                 </div>
-                <RadzenDatePicker TValue="DateTime?" Date="DateTime.Now" @bind-value="invoice.Date" />
+                <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
             </div>
             <br />
         </RadzenTabsItem>
@@ -37,42 +38,50 @@
         </RadzenTabsItem>
     </Tabs>
 </RadzenTabs>
-
+<button class="btn btn-primary" @onclick="(() => UpdateInvoice())">Save</button>
 <button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
-<button class="btn btn-danger" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
+<button class="btn btn-danger" @onclick="(() => DeleteInvoice())">Delete</button>
 
 @code {
     [Parameter]
     public string? InvoiceId { get; set; }
 
-    [Inject]
-    public InvoiceServices service { get; set; }
-
-    private List<Invoice>? Invoices;
-    public Invoice? invoice { get; set; }
+    DateTime invDate = DateTime.Now;
+    private List<Invoice> Invoices;
+    public Invoice? invoice = new Invoice();
 
     protected override async Task OnInitializedAsync()
     {
-        Invoices = await service.GetInvoiceAsync();
-        await base.OnInitializedAsync();
+        Invoices = await invoiceService.GetInvoiceAsync();
         await LoadInvoiceAsync();
+        await base.OnInitializedAsync();
     }
 
     private async Task LoadInvoiceAsync()
     {
-
         invoice = Invoices.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
-        await base.OnParametersSetAsync();
     }
 
-    private async Task DeleteInvoice(Invoice invoice)
+    private async Task UpdateInvoice()
     {
-        await service.DeleteInvoiceAsync(invoice);
+        invoice.Date = invDate;
+        await invoiceService.UpdateInvoiceAsync(invoice);
+        NavigationManager.NavigateTo("/invoices");
+    }
+
+    private async Task DeleteInvoice()
+    {
+        await invoiceService.DeleteInvoiceAsync(invoice);
         NavigationManager.NavigateTo("/invoices");
     } 
 
     private async Task Cancel()
     {
         NavigationManager.NavigateTo("/invoices");
+    }
+
+    void OnDateChange(DateTime date)
+    {
+        invDate = date;
     }
 }
