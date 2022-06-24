@@ -3,6 +3,7 @@
 @using Zip2Clear.Data
 
 @inject NavigationManager NavigationManager
+@inject InvoiceServices invoiceService
 
 <h2>Invoices</h2>
 <p>
@@ -38,28 +39,20 @@
                 }
         </tbody>
 </table>
-<div>
-   
-</div>
-
 
 @code {
-    [Inject]
-    public InvoiceServices service { get; set; }
-    
-    private List<Invoice> Invoices;
+    private IEnumerable<Invoice> Invoices;
     private Invoice selectedInvoice;
 
     protected override async Task OnInitializedAsync()
     {
-        Invoices = await service.GetInvoiceAsync();
-        await base.OnInitializedAsync();
         await RefreshInvoices();
+        await base.OnInitializedAsync();
     }
 
     private async Task RefreshInvoices()
     {
-        Invoices = await service.GetInvoiceAsync();
+        Invoices = await invoiceService.GetInvoiceAsync();
     }
 
     Invoice UpdateInvoice = new Invoice();
@@ -72,13 +65,13 @@
     
     private async Task UpdateInvoiceData()
     {
-        await service.UpdateInvoiceAsync(UpdateInvoice);
+        await invoiceService.UpdateInvoiceAsync(UpdateInvoice);
         await RefreshInvoices();
     }
 
     private async Task DeleteInvoice(Invoice invoice)
     {
-        await service.DeleteInvoiceAsync(invoice);
+        await invoiceService.DeleteInvoiceAsync(invoice);
         await RefreshInvoices();
     } 
     

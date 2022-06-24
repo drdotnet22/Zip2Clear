@@ -4,7 +4,7 @@
 
 @inject NavigationManager NavigationManager
 
-<h3>@invoice.Vendor.Name #@invoice.InvoiceNumber</h3>
+<h3>@invoice.Vendor?.Name #@invoice.InvoiceNumber</h3>
 <RadzenTabs>
     <Tabs>
         <RadzenTabsItem Text="Invoice Info">
