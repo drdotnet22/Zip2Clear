@@ -1,11 +1,13 @@
 ﻿@page "/invoices/edit/{InvoiceId}"
 
 @using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
 
 @inject NavigationManager NavigationManager
 @inject InvoiceServices invoiceService
+@inject MyDbContext context
 
-<h3>@invoice.VendorName #@invoice.InvoiceNumber</h3>
+<h3>@invoice.Vendor.Name #@invoice.InvoiceNumber</h3>
 
 <RadzenTabs>
     <Tabs>
@@ -22,14 +24,14 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">Vendor:</span>
                 </div>
-                <input class="form-control" @bind="invoice.VendorName"/>
+                <input class="form-control" @bind="invoice.Vendor.Name"/>
             </div>
             <br />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Invoice Date:</span>
                 </div>
-                <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
+                <DatePicker TValue="DateTime" Date="@invoice.Date" DateChanged="@(args => OnDateChange(args))" />
             </div>
             <br />
         </RadzenTabsItem>
@@ -48,17 +50,17 @@
 
     DateTime invDate = DateTime.Now;
     private List<Invoice> Invoices;
-    public Invoice? invoice = new Invoice();
+    public Invoice? invoice { get; set; } = new Invoice();
 
     protected override async Task OnInitializedAsync()
     {
-        Invoices = await invoiceService.GetInvoiceAsync();
         await LoadInvoiceAsync();
         await base.OnInitializedAsync();
     }
 
     private async Task LoadInvoiceAsync()
     {
+        Invoices = await context.Invoice.Include(i => i.Vendor).ToListAsync();
         invoice = Invoices.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
     }
 
@@ -82,6 +84,6 @@
 
     void OnDateChange(DateTime date)
     {
-        invDate = date;
+        invoice.Date = date;
     }
 }

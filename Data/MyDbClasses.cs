@@ -40,11 +40,12 @@ namespace Zip2Clear.Data
         public string InvoiceNumber { get; set; }
         public Guid? VendorId { get; set; }
         public Vendor? Vendor { get; set; }
-        public string? VendorName { get; set; }
-        public decimal FreightValue { get; set; }
-        public decimal InsuranceValue { get; set; }
+        public decimal Shipping { get; set; }
+        public decimal Insurance { get; set; }
     }
+    #endregion
 
+    #region Item class
     public class Item
     {
         public Guid Id { get; set; }
@@ -52,14 +53,11 @@ namespace Zip2Clear.Data
         public Invoice? Invoice { get; set; }
         public string? Department { get; set; }
         public double Quantity { get; set; }
-        public string Description { get; set; }
         public decimal Value { get; set; }
         public double? Weight { get; set; }
-        public string UomId { get; set; }
-        public double UomValue { get; set; }
-        public double HsCode { get; set; }
-        public double DutyGeneralRate { get; set; }
-        public double DutyExciseRate { get; set; }
+        public double? UomValue { get; set; }
+        public Guid? TarriffId { get; set; }
+        public Tarriff? Tarriff { get; set; }
     }
     #endregion
 
@@ -73,6 +71,18 @@ namespace Zip2Clear.Data
         public string? State { get; set; }
         public string? CountryCode { get; set; }
         public string? PostalCode { get; set; }
+    }
+    #endregion
+
+    #region Tarriff codes class
+    public class Tarriff
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public double Number { get; set; }
+        public string UomId { get; set; }
+        public double GeneralRate { get; set; }
+        public double ExciseRate { get; set; }
     }
     #endregion
 }

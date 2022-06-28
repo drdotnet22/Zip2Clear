@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zip2Clear.Migrations
 {
-    public partial class SecondInitialCommit : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,6 +42,22 @@ namespace Zip2Clear.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tarriff",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Number = table.Column<double>(type: "REAL", nullable: false),
+                    UomId = table.Column<string>(type: "TEXT", nullable: false),
+                    GeneralRate = table.Column<double>(type: "REAL", nullable: false),
+                    ExciseRate = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tarriff", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Vendor",
                 columns: table => new
                 {
@@ -67,7 +83,6 @@ namespace Zip2Clear.Migrations
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
                     InvoiceNumber = table.Column<string>(type: "TEXT", nullable: false),
                     VendorId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    VendorName = table.Column<string>(type: "TEXT", nullable: true),
                     FreightValue = table.Column<decimal>(type: "TEXT", nullable: false),
                     InsuranceValue = table.Column<decimal>(type: "TEXT", nullable: false)
                 },
@@ -94,14 +109,10 @@ namespace Zip2Clear.Migrations
                     InvoiceId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Department = table.Column<string>(type: "TEXT", nullable: true),
                     Quantity = table.Column<double>(type: "REAL", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
                     Value = table.Column<decimal>(type: "TEXT", nullable: false),
                     Weight = table.Column<double>(type: "REAL", nullable: true),
-                    UomId = table.Column<string>(type: "TEXT", nullable: false),
-                    UomValue = table.Column<double>(type: "REAL", nullable: false),
-                    HsCode = table.Column<double>(type: "REAL", nullable: false),
-                    DutyGeneralRate = table.Column<double>(type: "REAL", nullable: false),
-                    DutyExciseRate = table.Column<double>(type: "REAL", nullable: false)
+                    UomValue = table.Column<double>(type: "REAL", nullable: true),
+                    TarriffId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -111,87 +122,82 @@ namespace Zip2Clear.Migrations
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Item_Tarriff_TarriffId",
+                        column: x => x.TarriffId,
+                        principalTable: "Tarriff",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
                 table: "Declaration",
                 columns: new[] { "Id", "BOLnumber", "CountryOfDestination", "CountryOfOrigin", "CreatedDate", "DeclarationNumber", "DeclarationOffice", "Exporter", "Importer", "ManifestNumber", "ModeOfTransport", "PortOfEntry", "PortOfExit", "Regime", "Status", "Submitted", "SubmittedDate", "TotalGrossMassMeasureQnty", "TotalGrossMassMeasureUOM", "TotalPackageQnty", "TotalPackageQntyUOM", "Type" },
-                values: new object[] { new Guid("e1f04f61-2e77-4af5-8e93-58648bbdf948"), "PEVMOB005095", "BS", "US", new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7329), "2022DEC0000845484", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7331), 390.0, "LB", 1.0, "EA", "400" });
+                values: new object[] { new Guid("7ab485e6-c9ab-4034-928b-9cbffb3b55c0"), "PEVMOB005096", "BS", "US", new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5680), "2022DEC0000845474", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5682), 40.0, "LB", 1.0, "EA", "400" });
 
             migrationBuilder.InsertData(
                 table: "Declaration",
                 columns: new[] { "Id", "BOLnumber", "CountryOfDestination", "CountryOfOrigin", "CreatedDate", "DeclarationNumber", "DeclarationOffice", "Exporter", "Importer", "ManifestNumber", "ModeOfTransport", "PortOfEntry", "PortOfExit", "Regime", "Status", "Submitted", "SubmittedDate", "TotalGrossMassMeasureQnty", "TotalGrossMassMeasureUOM", "TotalPackageQnty", "TotalPackageQntyUOM", "Type" },
-                values: new object[] { new Guid("ea0b2207-1f04-471f-8820-f85c8fb84f21"), "PEVMOB005096", "BS", "US", new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7339), "2022DEC0000845474", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7341), 40.0, "LB", 1.0, "EA", "400" });
+                values: new object[] { new Guid("c7c3d1ce-08bb-4868-8667-df5a08ea9f3d"), "PEVMOB005095", "BS", "US", new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5670), "2022DEC0000845484", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5673), 390.0, "LB", 1.0, "EA", "400" });
 
             migrationBuilder.InsertData(
                 table: "Invoice",
-                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId", "VendorName" },
-                values: new object[] { new Guid("4cd50d48-c4cc-4186-9953-635cba807ce1"), new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7301), null, 75m, 150.23m, "11312272", null, null });
+                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId" },
+                values: new object[] { new Guid("1005a639-0642-4900-8c4e-393469b0fc89"), new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5640), null, 0m, 0m, "2022ES7023", null });
 
             migrationBuilder.InsertData(
                 table: "Invoice",
-                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId", "VendorName" },
-                values: new object[] { new Guid("7dd22063-0369-4d1d-8a2b-dbf4f3caebf9"), new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7298), null, 0m, 0m, "2022ES8200", null, null });
+                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId" },
+                values: new object[] { new Guid("1673f280-3349-4d7f-9b34-b5ade2d82e65"), new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5646), null, 75m, 150.23m, "11312272", null });
 
             migrationBuilder.InsertData(
                 table: "Invoice",
-                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId", "VendorName" },
-                values: new object[] { new Guid("885230a2-c169-441c-befa-60b745b60a98"), new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7295), null, 0m, 0m, "2022ES7023", null, null });
+                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId" },
+                values: new object[] { new Guid("5a94f2ec-0162-4021-8623-f6a4b4b9ebe0"), new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5602), null, 0m, 150m, "814184793", null });
 
             migrationBuilder.InsertData(
                 table: "Invoice",
-                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId", "VendorName" },
-                values: new object[] { new Guid("d49d206d-0ea7-458f-a4c8-9e7d16150631"), new DateTime(2022, 6, 23, 21, 26, 53, 801, DateTimeKind.Local).AddTicks(7253), null, 0m, 150m, "814184793", null, null });
+                columns: new[] { "Id", "Date", "DeclarationId", "FreightValue", "InsuranceValue", "InvoiceNumber", "VendorId" },
+                values: new object[] { new Guid("eeefd359-e822-4087-a463-29e8d375ab45"), new DateTime(2022, 6, 25, 16, 39, 14, 797, DateTimeKind.Local).AddTicks(5643), null, 0m, 0m, "2022ES8200", null });
 
             migrationBuilder.InsertData(
-                table: "Item",
-                columns: new[] { "Id", "Department", "Description", "DutyExciseRate", "DutyGeneralRate", "HsCode", "InvoiceId", "Quantity", "UomId", "UomValue", "Value", "Weight" },
-                values: new object[] { new Guid("9bbad374-0c6e-4799-a67d-c86d1ad38c2e"), "MS", "INNER TUBES", 45.0, 0.0, 40131000.0, null, 1.0, "EA", 1.0, 54.85m, 50.0 });
+                table: "Tarriff",
+                columns: new[] { "Id", "ExciseRate", "GeneralRate", "Name", "Number", "UomId" },
+                values: new object[] { new Guid("02fea001-96e2-42cf-84a2-2d322b43bfc2"), 0.0, 0.0, "APPLES", 8081000.0, "LB" });
 
             migrationBuilder.InsertData(
-                table: "Item",
-                columns: new[] { "Id", "Department", "Description", "DutyExciseRate", "DutyGeneralRate", "HsCode", "InvoiceId", "Quantity", "UomId", "UomValue", "Value", "Weight" },
-                values: new object[] { new Guid("b2e3427a-1408-4614-accf-4fc2ff318ce2"), "MS", "TIRES, CAR", 25.0, 0.0, 40111000.0, null, 1.0, "EA", 1.0, 168.25m, 150.0 });
+                table: "Tarriff",
+                columns: new[] { "Id", "ExciseRate", "GeneralRate", "Name", "Number", "UomId" },
+                values: new object[] { new Guid("0a113110-72da-44f0-afff-12459976dfed"), 0.0, 60.0, "CANDY", 17049010.0, "LB" });
 
             migrationBuilder.InsertData(
-                table: "Item",
-                columns: new[] { "Id", "Department", "Description", "DutyExciseRate", "DutyGeneralRate", "HsCode", "InvoiceId", "Quantity", "UomId", "UomValue", "Value", "Weight" },
-                values: new object[] { new Guid("d8fab7dd-1ea9-4614-8928-65e317d55ef3"), "MS", "AUTO PARTS", 60.0, 0.0, 87071010.0, null, 49.0, "EA", 49.0, 691.78m, 100.0 });
-
-            migrationBuilder.InsertData(
-                table: "Item",
-                columns: new[] { "Id", "Department", "Description", "DutyExciseRate", "DutyGeneralRate", "HsCode", "InvoiceId", "Quantity", "UomId", "UomValue", "Value", "Weight" },
-                values: new object[] { new Guid("df5ed718-6357-4397-bc98-bd4c6e800c52"), "MS", "AUTO PARTS", 60.0, 0.0, 87071010.0, null, 5.0, "EA", 5.0, 55.89m, 90.0 });
-
-            migrationBuilder.InsertData(
-                table: "Item",
-                columns: new[] { "Id", "Department", "Description", "DutyExciseRate", "DutyGeneralRate", "HsCode", "InvoiceId", "Quantity", "UomId", "UomValue", "Value", "Weight" },
-                values: new object[] { new Guid("f85203d5-f3b4-49cf-b40f-ba23147c524f"), "MF", "ONION BAGS", 0.0, 45.0, 39232990.0, null, 4.0, "LB", 40.0, 528m, 40.0 });
+                table: "Tarriff",
+                columns: new[] { "Id", "ExciseRate", "GeneralRate", "Name", "Number", "UomId" },
+                values: new object[] { new Guid("4d93a435-4e0c-4600-af25-6409b6bbbd90"), 0.0, 45.0, "BATTERIES", 85073000.0, "EA" });
 
             migrationBuilder.InsertData(
                 table: "Vendor",
                 columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("0d6684d1-ce66-4420-9407-7788037836b9"), "PO BOX 1723", "OKEECHOBEE", "US", "WALPOLE FEED", "34973", "FL" });
+                values: new object[] { new Guid("071b939c-de4a-454e-bebc-ccab1dce8fe4"), "12029 W DOPHIN CT", "HOMOSASSA", "US", "AGRIVET", "34448", "FL" });
 
             migrationBuilder.InsertData(
                 table: "Vendor",
                 columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("6f526cd3-7059-422d-b742-0acb482f29b2"), "1301 SW 2ND ST", "POMPANO BEACH", "US", "ROADWAY TIRES", "33069", "FL" });
+                values: new object[] { new Guid("24b12be4-a2ac-434d-8d15-5c237556a33f"), "2968 RAVENSWOOD ROAD", "FORT LAUDERDALE", "US", "TPH", "33312", "FL" });
 
             migrationBuilder.InsertData(
                 table: "Vendor",
                 columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("7e85c15f-fc51-44e3-ab40-6b2572fa1774"), "4300 STEWART ROAD", "LAKELAND", "US", "MONTE PACKAGE", "33815", "FL" });
+                values: new object[] { new Guid("90d7c762-c880-4fc5-9eb8-eee4ee67ce1f"), "4300 STEWART ROAD", "LAKELAND", "US", "MONTE PACKAGE", "33815", "FL" });
 
             migrationBuilder.InsertData(
                 table: "Vendor",
                 columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("b0fdc745-b051-4131-b4d3-7fcd0abc6721"), "12029 W DOPHIN CT", "HOMOSASSA", "US", "AGRIVET", "34448", "FL" });
+                values: new object[] { new Guid("a0fd6bbd-dab5-4596-829b-8b74f10a35ef"), "PO BOX 1723", "OKEECHOBEE", "US", "WALPOLE FEED", "34973", "FL" });
 
             migrationBuilder.InsertData(
                 table: "Vendor",
                 columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("ed8e436c-19f0-4dc6-9413-a4149b876ba4"), "2968 RAVENSWOOD ROAD", "FORT LAUDERDALE", "US", "TPH", "33312", "FL" });
+                values: new object[] { new Guid("f4b38c6f-f696-4889-83e9-08e8525eab88"), "1301 SW 2ND ST", "POMPANO BEACH", "US", "ROADWAY TIRES", "33069", "FL" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_DeclarationId",
@@ -207,6 +213,11 @@ namespace Zip2Clear.Migrations
                 name: "IX_Item_InvoiceId",
                 table: "Item",
                 column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Item_TarriffId",
+                table: "Item",
+                column: "TarriffId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -216,6 +227,9 @@ namespace Zip2Clear.Migrations
 
             migrationBuilder.DropTable(
                 name: "Invoice");
+
+            migrationBuilder.DropTable(
+                name: "Tarriff");
 
             migrationBuilder.DropTable(
                 name: "Declaration");

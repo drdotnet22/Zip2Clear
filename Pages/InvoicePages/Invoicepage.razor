@@ -1,14 +1,14 @@
 ﻿@page "/invoices"
 
 @using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
 
 @inject NavigationManager NavigationManager
 @inject InvoiceServices invoiceService
+@inject MyDbContext context
 
 <h2>Invoices</h2>
-<p>
-    <a href="/invoices/add">Create New</a>
-</p>
+<Button Color="Color.Primary" Clicked="@NewInvoice" >New Invoice</Button>
 
 <table class="table">
 		<thead>
@@ -28,9 +28,9 @@
                         <tr>
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.InvoiceNumber</td>
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.Date</td>
-                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.VendorName</td>
+                            <td @onclick="(() => ViewInvoice(invoice))">@invoice.Vendor?.Name</td>
                             <td width="180px">
-                                <button class="btn btn-secondary btn-sm" @onclick="(() => UpdateInvoice(invoice))">Edit</button>
+                                <button class="btn btn-secondary btn-sm" @onclick="(() => EditInvoice(invoice))">Edit</button>
                                 <button class="btn btn-danger btn-sm" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
                             </td>
                         </tr>
@@ -44,7 +44,7 @@
 </table>
 
 @code {
-    private IEnumerable<Invoice> Invoices;
+    IList<Invoice> Invoices;
     private Invoice selectedInvoice;
 
     protected override async Task OnInitializedAsync()
@@ -55,24 +55,30 @@
 
     private async Task RefreshInvoices()
     {
-        Invoices = await invoiceService.GetInvoiceAsync();
+        Invoices = context.Invoice.Include("Vendor").ToList();
     }
-    
-    private async Task UpdateInvoice(Invoice invoice)
+
+    private async Task EditInvoice(Invoice invoice)
     {
         string invoiceId = invoice.Id.ToString();
         NavigationManager.NavigateTo($"/invoices/edit/{invoiceId}");
     }
 
+    private async Task NewInvoice()
+    {
+        NavigationManager.NavigateTo($"/invoices/new");
+    }
+
     private async Task DeleteInvoice(Invoice invoice)
     {
-        await invoiceService.DeleteInvoiceAsync(invoice);
+        context.Invoice.Remove(invoice);
+        await context.SaveChangesAsync();
         await RefreshInvoices();
     } 
     
     private void ViewInvoice(Invoice invoice)
     {
         string invoiceId = invoice.Id.ToString();
-        NavigationManager.NavigateTo($"/invoices/{invoiceId}");
+        NavigationManager.NavigateTo($"/invoices/view/{invoiceId}");
     }
 }

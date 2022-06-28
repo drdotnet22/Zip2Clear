@@ -18,6 +18,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 {
     options.UseSqlite("Data Source = MyData.db");
 });
+
 builder.Services.AddScoped<DeclarationServices>();
 builder.Services.AddScoped<InvoiceServices>();
 builder.Services.AddScoped<ItemServices>();
@@ -25,6 +26,7 @@ builder.Services.AddScoped<VendorServices>();
 
 // Radzen components
 builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
 
 // blazorise
 builder.Services

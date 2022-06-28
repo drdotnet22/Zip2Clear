@@ -17,6 +17,7 @@ namespace Zip2Clear.Data
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<Declaration> Declaration { get; set; }
         public DbSet<Item> Item { get; set; }
+        public DbSet<Tarriff> Tarriff { get; set; }
         #endregion
 
         #region Overidden methods
@@ -25,7 +26,7 @@ namespace Zip2Clear.Data
             modelBuilder.Entity<Vendor>().HasData(GetVendors());
             modelBuilder.Entity<Invoice>().HasData(GetInvoices());
             modelBuilder.Entity<Declaration>().HasData(GetDeclarations());
-            modelBuilder.Entity<Item>().HasData(GetItems());
+            modelBuilder.Entity<Tarriff>().HasData(GetTarriffs());
             base.OnModelCreating(modelBuilder);
         }
         #endregion
@@ -56,22 +57,20 @@ namespace Zip2Clear.Data
         {
             return new List<Invoice>
             {
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "814184793", FreightValue = 0M, InsuranceValue = 150M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "2022ES7023", FreightValue = 0M, InsuranceValue = 0M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "2022ES8200", FreightValue = 0M, InsuranceValue = 0M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "11312272", FreightValue = 75M, InsuranceValue = 150.23M }
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "814184793", Shipping = 0M, Insurance = 150M },
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "2022ES7023", Shipping = 0M, Insurance = 0M },
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "2022ES8200", Shipping = 0M, Insurance = 0M },
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "11312272", Shipping = 75M, Insurance = 150.23M }
             };
         }
-        
-        private List<Item> GetItems()
+
+        private List<Tarriff> GetTarriffs()
         {
-            return new List<Item>
+            return new List<Tarriff>
             {
-                new Item { Id = Guid.NewGuid(), Department = "MS", Quantity = 1, Description = "INNER TUBES", Value = 54.85M, Weight = 50, UomId = "EA", UomValue = 1, HsCode = 40131000, DutyGeneralRate = 0, DutyExciseRate = 45 },
-                new Item { Id = Guid.NewGuid(), Department = "MS", Quantity = 1, Description = "TIRES, CAR", Value = 168.25M, Weight = 150, UomId = "EA", UomValue = 1, HsCode = 40111000, DutyGeneralRate = 0, DutyExciseRate = 25 },
-                new Item { Id = Guid.NewGuid(), Department = "MS", Quantity = 49, Description = "AUTO PARTS", Value = 691.78M, Weight = 100, UomId = "EA", UomValue = 49, HsCode = 87071010, DutyGeneralRate = 0, DutyExciseRate = 60 },
-                new Item { Id = Guid.NewGuid(), Department = "MS", Quantity = 5, Description = "AUTO PARTS", Value = 55.89M, Weight = 90, UomId = "EA", UomValue = 5, HsCode = 87071010, DutyGeneralRate = 0, DutyExciseRate = 60 },
-                new Item { Id = Guid.NewGuid(), Department = "MF", Quantity = 4, Description = "ONION BAGS", Value = 528M, Weight = 40, UomId = "LB", UomValue = 40, HsCode = 39232990, DutyGeneralRate = 45, DutyExciseRate = 0 }
+                new Tarriff { Id = Guid.NewGuid(), Name = "APPLES", Number = 08081000, UomId = "LB", GeneralRate = 0, ExciseRate = 0 },
+                new Tarriff { Id = Guid.NewGuid(), Name = "BATTERIES", Number = 85073000, UomId = "EA", GeneralRate = 45, ExciseRate = 0 },
+                new Tarriff { Id = Guid.NewGuid(), Name = "CANDY", Number = 17049010, UomId = "LB", GeneralRate = 60, ExciseRate = 0 }
             };
         }
         #endregion

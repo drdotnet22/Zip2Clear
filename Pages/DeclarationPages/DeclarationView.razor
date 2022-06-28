@@ -30,11 +30,11 @@
             <RadzenDataGrid AllowFiltering=true AllowColumnResize=true FilterMode="FilterMode.Advanced" 
                     AllowSorting=true PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary=true
                     TItem="Invoice" Data="@invoices" @ref="invoiceGrid"
-                    EditMode="DataGridEditMode.Single">
+                    EditMode="Radzen.DataGridEditMode.Single">
                 <Columns>
                     <RadzenDataGridColumn TItem="Invoice" Property="InvoiceNumber" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="Date" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="VendorName" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="FreightValue" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="InsuranceValue" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Context="invoice" Filterable=false Sortable=false Width="70px">
@@ -79,8 +79,9 @@
 
     private async Task RefreshInvoices()
     {
-        Invoices = await invoiceService.GetInvoiceAsync();
-        invoices = Invoices.Where(i => i.Declaration == declaration).ToList();
+        //Invoices = await invoiceService.GetInvoiceAsync();
+        invoices = dbContext.Invoice.Where(i => i.Declaration == declaration).Include("Vendor").ToList();
+        //invoices = Invoices.Where(i => i.Declaration == declaration).ToList();
     }
 
     #region Dialog

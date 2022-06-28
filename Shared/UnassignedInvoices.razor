@@ -1,10 +1,10 @@
-﻿@page "/invoices/unassigned/{declarationId}"
+﻿@page "/unassignedinvoices/{declarationId}"
 
 @using Microsoft.EntityFrameworkCore
 @using Zip2Clear.Data
 
 @inject Radzen.DialogService DialogService
-@inject Zip2Clear.Data.MyDbContext dbContext
+@inject Zip2Clear.Data.MyDbContext context
 @inject DeclarationServices declarationService
 
 <h6>Declaration Number: @declaration.DeclarationNumber</h6>
@@ -24,7 +24,7 @@
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="Invoice" Property="InvoiceNumber" Title="Invoice Number" Sortable="true" Filterable="true" />
-        <RadzenDataGridColumn TItem="Invoice" Property="VendorName" Title="Vendor" Sortable="true" Filterable="true" />
+        <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Title="Vendor" Sortable="true" Filterable="true" />
         <RadzenDataGridColumn TItem="Invoice" Property="Date" Title="Date" Sortable="true" Filterable="true" />
     </Columns>
 </RadzenDataGrid>
@@ -36,16 +36,17 @@
     [Parameter] public string? declarationId { get; set; }
 
     public Declaration declaration;
-    private List<Declaration> Declarations;
     IEnumerable<Invoice> unassignedInvoices;
     IList<Invoice> selectedInvoices;
     RadzenDataGrid<Invoice> grid;
 
     protected override async Task OnInitializedAsync()
     {
-        Declarations = await declarationService.GetDeclarationAsync();
-        declaration = Declarations.FirstOrDefault(d => d.DeclarationNumber == declarationId);
-        unassignedInvoices = dbContext.Invoice.Where(i => i.Declaration == null).ToList();
+        declaration = context.Declaration
+                        .FirstOrDefault(d => d.DeclarationNumber == declarationId);
+        unassignedInvoices = context.Invoice
+                                .Where(i => i.Declaration == null)
+                                .Include(i => i.Vendor).ToList();
         base.OnInitializedAsync();
     }
 
@@ -54,9 +55,9 @@
         foreach (var invoice in selectedInvoices)
         {
             invoice.Declaration = declaration;
-            dbContext.Update(invoice);
+            context.Update(invoice);
         }
-        await dbContext.SaveChangesAsync();
+        await context.SaveChangesAsync();
         DialogService.Close(true);
     }
 }
