@@ -1,13 +1,11 @@
-﻿@page "/invoices/edit/{InvoiceId}"
+﻿@page "/invoices/{InvoiceId}/edit"
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
 
 @inject NavigationManager NavigationManager
 @inject InvoiceServices invoiceService
-@inject MyDbContext context
-
-<h3>@invoice.Vendor.Name #@invoice.InvoiceNumber</h3>
+@inject MyDbContext dbContext
 
 <RadzenTabs>
     <Tabs>
@@ -24,14 +22,17 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">Vendor:</span>
                 </div>
-                <input class="form-control" @bind="invoice.Vendor.Name"/>
+                <Autocomplete TItem="Vendor" TValue="string" Data="@vendors" ValueField="@(( vendor ) => vendor.Name)" TextField="@(( vendor ) => vendor.Name)"
+                              @bind-SelectedValue=@selectedVendor>
+                    <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
+                </Autocomplete>
             </div>
             <br />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Invoice Date:</span>
                 </div>
-                <DatePicker TValue="DateTime" Date="@invoice.Date" DateChanged="@(args => OnDateChange(args))" />
+                <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
             </div>
             <br />
         </RadzenTabsItem>
@@ -48,26 +49,58 @@
     [Parameter]
     public string? InvoiceId { get; set; }
 
-    DateTime invDate = DateTime.Now;
+    bool newInv;
+    public IEnumerable<Vendor> vendors;
+    public string selectedVendor { get; set; }
+    public IEnumerable<Tarriff> tarrifList;
+    public string selectedTarriff { get; set; }
+
+    DateTime invDate = new DateTime();
     private List<Invoice> Invoices;
-    public Invoice? invoice { get; set; } = new Invoice();
+
+    public Invoice invoice { get; set; } = new Invoice();
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadInvoiceAsync();
+        vendors = await dbContext.Vendor.ToListAsync();
+        tarrifList = await dbContext.Tarriff.ToListAsync();
+        if (InvoiceId == "new")
+        {
+            newInv = true;
+            invDate = DateTime.Now;
+            invoice.Id = Guid.NewGuid();
+        }
+        else
+        {
+            await LoadInvoiceAsync();
+            selectedVendor = invoice.Vendor?.Name;
+            invDate = invoice.Date;
+        }
+
         await base.OnInitializedAsync();
     }
 
     private async Task LoadInvoiceAsync()
     {
-        Invoices = await context.Invoice.Include(i => i.Vendor).ToListAsync();
+        Invoices = await dbContext.Invoice.Include(i => i.Vendor).ToListAsync();
         invoice = Invoices.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
     }
 
     private async Task UpdateInvoice()
     {
+        invoice.Vendor = vendors.FirstOrDefault(v => v.Name == selectedVendor);
         invoice.Date = invDate;
-        await invoiceService.UpdateInvoiceAsync(invoice);
+        if (newInv == true)
+        {
+            invoice.Shipping = 0;
+            invoice.Insurance = 0;
+            await invoiceService.AddInvoiceAsync(invoice);
+        }
+        else
+        {
+            await invoiceService.UpdateInvoiceAsync(invoice);
+        }
+        
         NavigationManager.NavigateTo("/invoices");
     }
 
@@ -84,6 +117,6 @@
 
     void OnDateChange(DateTime date)
     {
-        invoice.Date = date;
+        invDate = date;
     }
 }

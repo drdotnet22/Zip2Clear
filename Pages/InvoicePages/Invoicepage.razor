@@ -61,12 +61,12 @@
     private async Task EditInvoice(Invoice invoice)
     {
         string invoiceId = invoice.Id.ToString();
-        NavigationManager.NavigateTo($"/invoices/edit/{invoiceId}");
+        NavigationManager.NavigateTo($"/invoices/{invoiceId}/edit");
     }
 
     private async Task NewInvoice()
     {
-        NavigationManager.NavigateTo($"/invoices/new");
+        NavigationManager.NavigateTo($"/invoice/new");
     }
 
     private async Task DeleteInvoice(Invoice invoice)
@@ -79,6 +79,6 @@
     private void ViewInvoice(Invoice invoice)
     {
         string invoiceId = invoice.Id.ToString();
-        NavigationManager.NavigateTo($"/invoices/view/{invoiceId}");
+        NavigationManager.NavigateTo($"/invoices/{invoiceId}/view");
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/invoices/new"
+﻿@page "/invoice/new"
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
@@ -40,14 +40,14 @@
         <div class="input-group-prepend">
             <span class="input-group-text">Shipping and Handling:</span>
         </div>
-        <input class="form-control" @ref="firstEle" @bind="NewInvoice.Shipping" />
+        <input class="form-control" @bind="NewInvoice.Shipping" />
     </div>
     <br />
     <div class="input-group">
         <div class="input-group-prepend">
             <span class="input-group-text">Insurance/BOL freight:</span>
         </div>
-        <input class="form-control" @ref="firstEle" @bind="NewInvoice.Insurance" />
+        <input class="form-control" @bind="NewInvoice.Insurance" />
     </div>
 </RadzenCard>
 
@@ -86,7 +86,7 @@
         <Columns>
             <RadzenDataGridColumn TItem="Item" Property="Quantity" Title="Quantity" >
                 <EditTemplate Context="item">
-                    <RadzenNumeric Name="Quantity" @bind-Value="item.Quantity" TabIndex="1"/>
+                    <RadzenNumeric Name="Quantity" @bind-Value="item.Quantity"/>
                     <RadzenRequiredValidator Text="Quantity is required!" Component="Quantity" Popup="true" />
                 </EditTemplate>
             </RadzenDataGridColumn>
@@ -140,11 +140,11 @@
     private ElementReference newItem;
     bool invoiceSaved = false;
     bool saveInvVis = true;
-    bool popup;
 
     RadzenDataGrid<Item> itemsGrid;
     IList<Item> items;
     Item itemToInsert;
+    public Invoice NewInvoice { get; set; } = new Invoice();
 
     public IEnumerable<Vendor> vendors;
     public string selectedVendor { get; set; }
@@ -168,7 +168,6 @@
         }
     }
 
-    public Invoice NewInvoice { get; set; } = new Invoice();
     private async Task AddNewInvoice()
     {
         try

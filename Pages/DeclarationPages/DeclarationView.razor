@@ -32,11 +32,11 @@
                     TItem="Invoice" Data="@invoices" @ref="invoiceGrid"
                     EditMode="Radzen.DataGridEditMode.Single">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Invoice" Property="InvoiceNumber" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="Date" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="FreightValue" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="InsuranceValue" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="InvoiceNumber" Title="Invoice Number" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="Date" Title="Date" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Title="Vendor" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="Shipping" Title="Shipping" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="Insurance" Title="B/L freight" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Context="invoice" Filterable=false Sortable=false Width="70px">
                         <Template Context="invoice">
                             <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Click="@(args => DeleteInvoiceRow(invoice))" />
@@ -87,14 +87,7 @@
     #region Dialog
     public void Dispose()
     {
-        // The DialogService is a singleton so it is advisable to unsubscribe.
-        DialogService.OnOpen -= Open;
-        DialogService.OnClose -= Close;
     }
-
-    void Open(string title, Type type, Dictionary<string, object> parameters, DialogOptions options) {}
-
-    void Close(dynamic result) {}
 
     public async Task OpenInvoiceList()
     {

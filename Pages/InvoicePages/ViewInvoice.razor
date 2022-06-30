@@ -1,4 +1,4 @@
-﻿@page "/invoices/view/{InvoiceId}"
+﻿@page "/invoices/{InvoiceId}/view"
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
@@ -82,6 +82,6 @@
 
     private async Task Edit()
     {
-        NavigationManager.NavigateTo($"/invoices/edit/{InvoiceId}");
+        NavigationManager.NavigateTo($"/invoices/{InvoiceId}/edit");
     }
 }
