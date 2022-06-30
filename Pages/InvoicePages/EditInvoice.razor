@@ -10,31 +10,37 @@
 <RadzenTabs>
     <Tabs>
         <RadzenTabsItem Text="Invoice Info">
-            <br />
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Invoice Number:</span>
-                </div>
-                <input class="form-control" @bind="invoice.InvoiceNumber" />
-            </div>
-            <br />
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Vendor:</span>
-                </div>
-                <Autocomplete TItem="Vendor" TValue="string" Data="@vendors" ValueField="@(( vendor ) => vendor.Name)" TextField="@(( vendor ) => vendor.Name)"
-                              @bind-SelectedValue=@selectedVendor>
-                    <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
-                </Autocomplete>
-            </div>
-            <br />
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Invoice Date:</span>
-                </div>
-                <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
-            </div>
-            <br />
+            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+                <Fields>
+                    <Field>
+                        <FieldLabel>Invoice Number</FieldLabel>
+                        <TextEdit @ref="@firstEle" @bind-Text="invoice.InvoiceNumber" />
+                    </Field>
+                    <Field>
+                        <FieldLabel>Vendor</FieldLabel>
+                        <Autocomplete TItem="Vendor" TValue="string" Data="@vendors" ValueField="@(( vendor ) => vendor.Name)" TextField="@(( vendor ) => vendor.Name)"
+                                      @bind-SelectedValue=@selectedVendor>
+                            <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
+                        </Autocomplete>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Date</FieldLabel>
+                        <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
+                    </Field>
+                </Fields>
+            </Div>
+            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+                <Fields>
+                    <Field>
+                        <FieldLabel>Shipping</FieldLabel>
+                        <NumericEdit TValue="decimal" @bind-Value="invoice.Shipping" />
+                    </Field>
+                    <Field>
+                        <FieldLabel>Insurance/BOL freight</FieldLabel>
+                        <NumericEdit TValue="decimal" @bind-Value="invoice.Insurance" />
+                    </Field>
+                </Fields>
+            </Div>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Items">
             This is where items are entered.
@@ -54,6 +60,7 @@
     public string selectedVendor { get; set; }
     public IEnumerable<Tarriff> tarrifList;
     public string selectedTarriff { get; set; }
+    private Blazorise.TextEdit firstEle;
 
     DateTime invDate = new DateTime();
     private List<Invoice> Invoices;
@@ -78,6 +85,14 @@
         }
 
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            firstEle.Focus();
+        }
     }
 
     private async Task LoadInvoiceAsync()
