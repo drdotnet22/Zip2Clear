@@ -2,65 +2,117 @@
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
+@using Radzen
 
+@inject Radzen.DialogService DialogService
 @inject NavigationManager NavigationManager
 @inject InvoiceServices invoiceService
 @inject MyDbContext dbContext
 
-<RadzenTabs>
-    <Tabs>
-        <RadzenTabsItem Text="Invoice Info">
-            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
-                <Fields>
-                    <Field>
-                        <FieldLabel>Invoice Number</FieldLabel>
-                        <TextEdit @ref="@firstEle" @bind-Text="invoice.InvoiceNumber" />
-                    </Field>
-                    <Field>
-                        <FieldLabel>Vendor</FieldLabel>
-                        <Autocomplete TItem="Vendor" TValue="string" Data="@vendors" ValueField="@(( vendor ) => vendor.Name)" TextField="@(( vendor ) => vendor.Name)"
-                                      @bind-SelectedValue=@selectedVendor>
-                            <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
-                        </Autocomplete>
-                    </Field>
-                    <Field>
-                        <FieldLabel>Date</FieldLabel>
-                        <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
-                    </Field>
-                </Fields>
-            </Div>
-            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
-                <Fields>
-                    <Field>
-                        <FieldLabel>Shipping</FieldLabel>
-                        <NumericEdit TValue="decimal" @bind-Value="invoice.Shipping" />
-                    </Field>
-                    <Field>
-                        <FieldLabel>Insurance/BOL freight</FieldLabel>
-                        <NumericEdit TValue="decimal" @bind-Value="invoice.Insurance" />
-                    </Field>
-                </Fields>
-            </Div>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="Items">
-            This is where items are entered.
-        </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
-<button class="btn btn-primary" @onclick="(() => UpdateInvoice())">Save</button>
-<button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
-<button class="btn btn-danger" @onclick="(() => DeleteInvoice())">Delete</button>
+@if (!newInv)
+{
+    <h3>@invoice.Vendor?.Name #@invoice.InvoiceNumber</h3>
+}
+
+<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+    <Fields>
+        <Field>
+            <FieldLabel>Invoice Number</FieldLabel>
+            <TextEdit @ref="@firstEle" @bind-Text="invoice.InvoiceNumber" />
+        </Field>
+        <Field>
+            <FieldLabel>Vendor</FieldLabel>
+            <Autocomplete TItem="Vendor" TValue="string" Data="@vendors" ValueField="@(( vendor ) => vendor.Name)" TextField="@(( vendor ) => vendor.Name)"
+                            @bind-SelectedValue=@selectedVendor>
+                <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
+            </Autocomplete>
+        </Field>
+        <Field>
+            <FieldLabel>Date</FieldLabel>
+            <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
+        </Field>
+    </Fields>
+</Div>
+<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+    <Fields>
+        <Field>
+            <FieldLabel>Shipping</FieldLabel>
+            <NumericEdit TValue="decimal" @bind-Value="invoice.Shipping" />
+        </Field>
+        <Field>
+            <FieldLabel>Insurance/BOL freight</FieldLabel>
+            <NumericEdit TValue="decimal" @bind-Value="invoice.Insurance" />
+        </Field>
+    </Fields>
+</Div>
+<RadzenButton Visible="newInv" Click="@SaveNewInvoice">Save</RadzenButton>
+         
+@if (!newInv)
+{
+    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="@AddItemDialog" >Add Item</RadzenButton>
+    <RadzenDataGrid TItem="Item" Data="@items" RowCreate="@OnCreateItemRow" RowUpdate="OnUpdateItemRow" @ref="itemsGrid" 
+        AllowFiltering="true" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single" >
+        <Columns>
+            <RadzenDataGridColumn TItem="Item" Property="Quantity" Title="Quantity" >
+                <EditTemplate Context="item">
+                    <RadzenNumeric Name="Quantity" @bind-Value="item.Quantity"/>
+                    <RadzenRequiredValidator Text="Quantity is required!" Component="Quantity" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Item" Property="Tarriff.Name" Title="Description" >
+                <EditTemplate Context="item">
+                    <RadzenTextBox Name="Description" @bind-Value="item.Department" />
+                    <RadzenRequiredValidator Text="Description is required!" Component="Description" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Item" Property="Value" Title="Value" >
+                <Template Context="item">
+                    @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.Value)
+                </Template>
+                <EditTemplate Context="item">
+                    <RadzenNumeric Name="Value" @bind-Value="item.Value" />
+                    <RadzenRequiredValidator Text="Value is required!" Component="Value" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Item" Property="Weight" Title="Weight" >
+                <EditTemplate Context="item">
+                    <RadzenNumeric Name="Value" @bind-Value="item.Weight" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Item" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px" >
+                <Template Context="item">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="item">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="@((args) => SaveItemRow(item))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@((args) => CancelItemEdit(item))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+    <br/><br/>
+    <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom">
+        <button class="btn btn-primary" @onclick="(() => UpdateInvoice())">Save</button>
+        <button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
+        <button class="btn btn-danger" @onclick="(() => DeleteInvoice())">Delete</button>
+    </Div>
+}
 
 @code {
     [Parameter]
     public string? InvoiceId { get; set; }
 
-    bool newInv;
+    bool newInv = false;
     public IEnumerable<Vendor> vendors;
     public string selectedVendor { get; set; }
     public IEnumerable<Tarriff> tarrifList;
     public string selectedTarriff { get; set; }
-    private Blazorise.TextEdit firstEle;
+    RadzenDataGrid<Item> itemsGrid;
+    IList<Item> items;
+    Item itemToInsert;
 
     DateTime invDate = new DateTime();
     private List<Invoice> Invoices;
@@ -80,6 +132,7 @@
         else
         {
             await LoadInvoiceAsync();
+            RefreshItems();
             selectedVendor = invoice.Vendor?.Name;
             invDate = invoice.Date;
         }
@@ -87,12 +140,26 @@
         await base.OnInitializedAsync();
     }
 
+    private Blazorise.TextEdit firstEle;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             firstEle.Focus();
         }
+    }
+
+    private async Task RefreshItems()
+    {
+        items = dbContext.Item.Where(i => i.InvoiceId == invoice.Id).Include(i => i.Invoice).Include(i => i.Tarriff).ToList();
+    }
+
+    private async Task SaveNewInvoice()
+    {
+        invoice.Vendor = vendors.FirstOrDefault(v => v.Name == selectedVendor);
+        invoice.Date = invDate;
+        await invoiceService.AddInvoiceAsync(invoice);
+        newInv = false;
     }
 
     private async Task LoadInvoiceAsync()
@@ -115,8 +182,6 @@
         {
             await invoiceService.UpdateInvoiceAsync(invoice);
         }
-        
-        NavigationManager.NavigateTo("/invoices");
     }
 
     private async Task DeleteInvoice()
@@ -133,5 +198,75 @@
     void OnDateChange(DateTime date)
     {
         invDate = date;
+    }
+
+    #region DataGrid row edit
+    void OnCreateItemRow(Item item)
+    {
+        dbContext.Item.Add(item);
+        item.Id = Guid.NewGuid();
+
+        //for demo
+        item.UomValue = 15;
+        item.Invoice = invoice;
+
+        dbContext.SaveChanges();
+    }
+
+    void OnUpdateItemRow(Item item)
+    {
+        if (item == itemToInsert)
+        {
+            itemToInsert = null;
+        }
+
+        dbContext.Item.Update(item);
+        dbContext.SaveChanges();
+    }
+
+    async Task InsertItemRow()
+    {
+        itemToInsert = new Item();
+        await itemsGrid.InsertRow(itemToInsert);
+    }
+
+    async Task SaveItemRow(Item item)
+    {
+        if (item == itemToInsert)
+        {
+            itemToInsert = null;
+        }
+        await itemsGrid.UpdateRow(item);
+    }
+
+    void CancelItemEdit(Item item)
+    {
+        if (item == itemToInsert)
+        {
+            itemToInsert = null;
+        }
+
+        itemsGrid.CancelEditRow(item);
+
+        var itemEntry = dbContext.Entry(item);
+        if (itemEntry.State == EntityState.Modified)
+        {
+            itemEntry.CurrentValues.SetValues(itemEntry.OriginalValues);
+            itemEntry.State = EntityState.Unchanged;
+        }
+    }
+    #endregion
+
+    public void Dispose()
+    {
+    }
+
+    public async Task AddItemDialog()
+    {
+        await DialogService.OpenAsync<Shared.NewItem>("New Item",
+               new Dictionary<string, object>() { { "InvoiceId", invoice.Id.ToString() } },
+               new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
+
+        await RefreshItems();
     }
 }
