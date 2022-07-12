@@ -14,14 +14,34 @@
 <RadzenTabs>
     <Tabs>
         <RadzenTabsItem Text="Invoice Info">
-            <h5>Invoice Number:</h5>
-            <p>@invoice.InvoiceNumber</p>
-            <br />
-            <h5>Vendor:</h5>
-            <p>@invoice.Vendor?.Name</p>
-            <br />
-            <h5>Invoice Date:</h5>
-            <p>@invoice.Date</p>
+            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+                <Fields>
+                    <Field>
+                        <FieldLabel>Invoice Number</FieldLabel>
+                        <TextEdit Disabled="true" @bind-Text="invoice.InvoiceNumber" />
+                    </Field>
+                    <Field>
+                        <FieldLabel>Vendor</FieldLabel>
+                        <TextEdit Disabled="true" @bind-Text="invoice.Vendor.Name" />
+                    </Field>
+                    <Field>
+                        <FieldLabel>Date</FieldLabel>
+                        <DatePicker TValue="DateTime" Disabled="true" Date="@invoice.Date" />
+                    </Field>
+                </Fields>
+            </Div>
+            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+                <Fields>
+                    <Field>
+                        <FieldLabel>Shipping</FieldLabel>
+                        <NumericEdit Disabled="true" TValue="decimal" @bind-Value="invoice.Shipping" />
+                    </Field>
+                    <Field>
+                        <FieldLabel>Insurance/BOL freight</FieldLabel>
+                        <NumericEdit Disabled="true" TValue="decimal" @bind-Value="invoice.Insurance" />
+                    </Field>
+                </Fields>
+            </Div>
         </RadzenTabsItem>
         <RadzenTabsItem Text="Items" >
             <RadzenDataGrid TItem="Item" Data="@items" >
