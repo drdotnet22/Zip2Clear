@@ -1,0 +1,103 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using Zip2Clear.Data
+
+@inject Radzen.DialogService DialogService
+@inject Zip2Clear.Data.MyDbContext dbContext
+
+<h3>New Item</h3>
+<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom">
+    <Fields>
+        <Field>
+            <FieldLabel>Quantity</FieldLabel>
+            <NumericEdit TValue="double" @ref="qntyEle" @bind-Value="item.Quantity"/>
+        </Field>
+        <Field>
+            <FieldLabel>Description</FieldLabel>
+            <Autocomplete TItem="Tarriff" TValue="Tarriff" Data="@tarriffs" ValueField="@(( tarriffs ) => tarriffs)" 
+                TextField="@(( tarriffs ) => tarriffs.Name)" @bind-SelectedValue="@item.Tarriff" />
+        </Field>
+        <Field>
+            <FieldLabel>Value</FieldLabel>
+            <NumericEdit TValue="decimal" @bind-Value="item.Value" />
+        </Field>
+    </Fields>
+</Div>
+<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+    <Fields>
+        <Field>
+            <FieldLabel>Weight</FieldLabel>
+            <NumericEdit TValue="double?" @bind-Value="item.Weight" @onblur="OnTarriffSet" />
+        </Field>
+        <Field>
+            <FieldLabel>UOM: Code is @item.Tarriff?.UomId</FieldLabel>
+            <NumericEdit TValue="double?" @bind-Value="item.UomValue" />
+        </Field>
+        <Field>
+            <FieldLabel>Department</FieldLabel>
+            <TextEdit @bind-Text="item.Department" />
+        </Field>
+    </Fields>
+</Div>
+
+<Button Class="btn btn-primary" Clicked="SaveAndNew" >Save and New</Button>
+<Button Class="btn btn-secondary" Clicked="SaveAndClose" >Save and close</Button>
+<Button Class="btn btn-danger" Clicked="CancelAndClose" >Cancel and Close</Button>
+
+
+@code {
+    [Parameter] public string InvoiceId { get; set; }
+
+
+    public Invoice invoice;
+    public Item item { get; set; } 
+    public IEnumerable<Tarriff> tarriffs;
+    private List<Invoice> invoiceList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        invoiceList = await dbContext.Invoice.ToListAsync();
+        invoice = invoiceList.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
+        tarriffs = await dbContext.Tarriff.ToListAsync();
+        AddItem();
+    }
+
+    private async Task AddItem()
+    {
+        item = new Item();
+        item.Id = Guid.NewGuid();
+        item.Invoice = invoice;
+    }
+
+    private Blazorise.NumericEdit<double> qntyEle;
+    private async Task SaveAndNew()
+    {
+        dbContext.Item.Add(item);
+        await dbContext.SaveChangesAsync();
+        AddItem();
+        qntyEle.Focus();
+    }
+
+    private async Task SaveAndClose()
+    {
+        dbContext.Item.Add(item);
+        await dbContext.SaveChangesAsync();
+        DialogService.Close(true);
+    }
+
+    private async Task CancelAndClose()
+    {
+        DialogService.Close(true);
+    }
+
+    private async Task OnTarriffSet()
+    {
+        if (item.Tarriff.UomId == "EA")
+        {
+            item.UomValue = item.Quantity;
+        }
+        else if (item.Tarriff.UomId == "LB")
+        {
+            item.UomValue = item.Weight;
+        }
+    }
+}
