@@ -59,7 +59,7 @@
                     <RadzenRequiredValidator Text="Quantity is required!" Component="Quantity" Popup="true" />
                 </EditTemplate>
                 <FooterTemplate>
-                    Total Qnty: @items.Sum(i => i.Quantity)
+                    Total Qnty: @items?.Sum(i => i.Quantity)
                 </FooterTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Item" Property="Tarriff.Name" Title="Description" >
@@ -77,7 +77,7 @@
                     <RadzenRequiredValidator Text="Value is required!" Component="Value" Popup="true" />
                 </EditTemplate>
                 <FooterTemplate>
-                    @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", items.Sum(i => i.Value))
+                    @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", items?.Sum(i => i.Value))
                 </FooterTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Item" Property="Weight" Title="Weight" >
@@ -85,7 +85,7 @@
                     <RadzenNumeric Name="Value" @bind-Value="item.Weight" />
                 </EditTemplate>
                 <FooterTemplate>
-                    Total Weight: @items.Sum(i => i.Weight) lb.
+                    Total Weight: @items?.Sum(i => i.Weight) lb.
                 </FooterTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Item" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px" >
