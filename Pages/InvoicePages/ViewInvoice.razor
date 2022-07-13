@@ -46,11 +46,27 @@
         <RadzenTabsItem Text="Items" >
             <RadzenDataGrid TItem="Item" Data="@items" >
                 <Columns>
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Department" Title="Department" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Quantity" Title="Quantity" />
+                    <RadzenDataGridColumn TItem="Item" Property="Item.Department" Title="Department" >
+                        <FooterTemplate >
+                            Totals:
+                        </FooterTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Item" Property="Item.Quantity" Title="Quantity" >
+                        <FooterTemplate>
+                            @items.Sum(i => i.Quantity)
+                        </FooterTemplate>
+                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.Name" Title="Description" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Value" Title="Value" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Weight" Title="Weight" />
+                    <RadzenDataGridColumn TItem="Item" Property="Item.Value" Title="Value" >
+                        <FooterTemplate>
+                            @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", items.Sum(i => i.Value))
+                        </FooterTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Item" Property="Item.Weight" Title="Weight" >
+                        <FooterTemplate>
+                            @items.Sum(i => i.Weight)
+                        </FooterTemplate>
+                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="Item" Property="Item.UomValue" Title="UOM Value" TextAlign="TextAlign.Right" />
                     <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.UomId" Title="UOM ID" TextAlign="TextAlign.Left" />
                     <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.Number" Title="Tarrif Number" Width="140px" TextAlign="TextAlign.Center" />
