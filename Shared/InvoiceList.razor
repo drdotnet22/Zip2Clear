@@ -1,0 +1,40 @@
+﻿@using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject NavigationManager NavigationManager
+@inject InvoiceServices invoiceService
+@inject MyDbContext context
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Invoice Number</th>
+            <th>Invoice Date</th>
+            <th>Vendor</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (invoiceList.Any())
+        {
+            @foreach (var invoice in invoiceList)
+            {
+                <tr>
+                    <td >@invoice.InvoiceNumber</td>
+                    <td >@invoice.Date</td>
+                    <td >@invoice.Vendor?.Name</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="6"><strong>No invoices available</strong></td></tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [CascadingParameter]
+    protected IList<Invoice> invoiceList { get; set; }
+}

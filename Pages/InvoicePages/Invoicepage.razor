@@ -44,6 +44,9 @@
 </table>
 
 @code {
+    [CascadingParameter]
+    protected Declaration declaration { get; set; }
+
     IList<Invoice> Invoices;
     private Invoice selectedInvoice;
 
@@ -55,7 +58,14 @@
 
     private async Task RefreshInvoices()
     {
-        Invoices = context.Invoice.Include("Vendor").ToList();
+        if (declaration != null)
+        {
+            Invoices = context.Invoice.Where(i => i.Declaration == declaration).Include(i => i.Vendor).ToList();
+        }
+        else
+        {
+            Invoices = context.Invoice.Include("Vendor").ToList();
+        }
     }
 
     private async Task EditInvoice(Invoice invoice)
