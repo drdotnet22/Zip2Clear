@@ -1,0 +1,48 @@
+﻿@page "/tarifflist"
+
+@using Data
+@using Microsoft.EntityFrameworkCore
+@using Radzen
+
+@inject MyDbContext dbContext
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Number</th>
+            <th>UOM ID</th>
+            <th>General Rate</th>
+            <th>Excise Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (tariffs.Any())
+        {
+            @foreach (var t in tariffs)
+            {
+                <tr>
+                    <td>@t.Name</td>
+                    <td>@t.Number</td>
+                    <td>@t.UomId</td>
+                    <td>@t.GeneralRate</td>
+                    <td>@t.ExciseRate</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="6"><strong>No vendors available</strong></td></tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private IEnumerable<Tariff> tariffs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tariffs = await dbContext.Tariff.ToListAsync();
+        await base.OnInitializedAsync();
+    }
+}
