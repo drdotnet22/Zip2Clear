@@ -17,7 +17,7 @@ namespace Zip2Clear.Data
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<Declaration> Declaration { get; set; }
         public DbSet<Item> Item { get; set; }
-        public DbSet<Tarriff> Tarriff { get; set; }
+        public DbSet<Tariff> Tariff { get; set; }
         #endregion
 
         #region Overidden methods
@@ -26,7 +26,7 @@ namespace Zip2Clear.Data
             modelBuilder.Entity<Vendor>().HasData(GetVendors());
             modelBuilder.Entity<Invoice>().HasData(GetInvoices());
             modelBuilder.Entity<Declaration>().HasData(GetDeclarations());
-            modelBuilder.Entity<Tarriff>().HasData(GetTarriffs());
+            modelBuilder.Entity<Tariff>().HasData(GetTariffs());
             base.OnModelCreating(modelBuilder);
         }
         #endregion
@@ -57,20 +57,20 @@ namespace Zip2Clear.Data
         {
             return new List<Invoice>
             {
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "814184793", Shipping = 0M, Insurance = 150M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "2022ES7023", Shipping = 0M, Insurance = 0M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "2022ES8200", Shipping = 0M, Insurance = 0M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, InvoiceNumber = "11312272", Shipping = 75M, Insurance = 150.23M }
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "814184793", Shipping = 0M, Insurance = 150M },
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "2022ES7023", Shipping = 0M, Insurance = 0M },
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "2022ES8200", Shipping = 0M, Insurance = 0M },
+                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "11312272", Shipping = 75M, Insurance = 150.23M }
             };
         }
 
-        private List<Tarriff> GetTarriffs()
+        private List<Tariff> GetTariffs()
         {
-            return new List<Tarriff>
+            return new List<Tariff>
             {
-                new Tarriff { Id = Guid.NewGuid(), Name = "APPLES", Number = 08081000, UomId = "LB", GeneralRate = 0, ExciseRate = 0 },
-                new Tarriff { Id = Guid.NewGuid(), Name = "BATTERIES", Number = 85073000, UomId = "EA", GeneralRate = 45, ExciseRate = 0 },
-                new Tarriff { Id = Guid.NewGuid(), Name = "CANDY", Number = 17049010, UomId = "LB", GeneralRate = 60, ExciseRate = 0 }
+                new Tariff { Id = Guid.NewGuid(), Name = "APPLES", Number = 08081000, UomId = "LB", GeneralRate = 0, ExciseRate = 0 },
+                new Tariff { Id = Guid.NewGuid(), Name = "BATTERIES", Number = 85073000, UomId = "EA", GeneralRate = 45, ExciseRate = 0 },
+                new Tariff { Id = Guid.NewGuid(), Name = "CANDY", Number = 17049010, UomId = "LB", GeneralRate = 60, ExciseRate = 0 }
             };
         }
         #endregion

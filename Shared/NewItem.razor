@@ -13,8 +13,8 @@
         </Field>
         <Field>
             <FieldLabel>Description</FieldLabel>
-            <Autocomplete TItem="Tarriff" TValue="Tarriff" Data="@tarriffs" ValueField="@(( tarriffs ) => tarriffs)" 
-                TextField="@(( tarriffs ) => tarriffs.Name)" @bind-SelectedValue="@item.Tarriff" />
+            <Autocomplete TItem="Tariff" TValue="Tariff" Data="@tariffs" ValueField="@(( tariffs ) => tariffs)" 
+                TextField="@(( tariffs ) => tariffs.Name)" @bind-SelectedValue="@item.Tariff" />
         </Field>
         <Field>
             <FieldLabel>Value</FieldLabel>
@@ -26,10 +26,10 @@
     <Fields>
         <Field>
             <FieldLabel>Weight</FieldLabel>
-            <NumericEdit TValue="double?" @bind-Value="item.Weight" @onblur="OnTarriffSet" />
+            <NumericEdit TValue="double?" @bind-Value="item.Weight" @onblur="OnTariffSet" />
         </Field>
         <Field>
-            <FieldLabel>UOM: Code is @item.Tarriff?.UomId</FieldLabel>
+            <FieldLabel>UOM: Code is @item.Tariff?.UomId</FieldLabel>
             <NumericEdit TValue="double?" @bind-Value="item.UomValue" />
         </Field>
         <Field>
@@ -50,14 +50,14 @@
 
     public Invoice invoice;
     public Item item { get; set; } 
-    public IEnumerable<Tarriff> tarriffs;
+    public IEnumerable<Tariff> tariffs;
     private List<Invoice> invoiceList;
 
     protected override async Task OnInitializedAsync()
     {
         invoiceList = await dbContext.Invoice.ToListAsync();
         invoice = invoiceList.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
-        tarriffs = await dbContext.Tarriff.ToListAsync();
+        tariffs = await dbContext.Tariff.ToListAsync();
         AddItem();
     }
 
@@ -89,13 +89,13 @@
         DialogService.Close(true);
     }
 
-    private async Task OnTarriffSet()
+    private async Task OnTariffSet()
     {
-        if (item.Tarriff.UomId == "EA")
+        if (item.Tariff.UomId == "EA")
         {
             item.UomValue = item.Quantity;
         }
-        else if (item.Tarriff.UomId == "LB")
+        else if (item.Tariff.UomId == "LB")
         {
             item.UomValue = item.Weight;
         }

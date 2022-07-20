@@ -37,7 +37,7 @@ namespace Zip2Clear.Data
         public Guid? DeclarationId { get; set; } //This is a foreign key
         public Declaration? Declaration { get; set; } //This is a navigation property
         public DateTime Date { get; set; }
-        public string InvoiceNumber { get; set; }
+        public string Number { get; set; }
         public Guid? VendorId { get; set; }
         public Vendor? Vendor { get; set; }
         public decimal Shipping { get; set; }
@@ -56,8 +56,8 @@ namespace Zip2Clear.Data
         public decimal Value { get; set; }
         public double? Weight { get; set; }
         public double? UomValue { get; set; }
-        public Guid? TarriffId { get; set; }
-        public Tarriff? Tarriff { get; set; }
+        public Guid? TariffId { get; set; }
+        public Tariff? Tariff { get; set; }
     }
     #endregion
 
@@ -74,8 +74,8 @@ namespace Zip2Clear.Data
     }
     #endregion
 
-    #region Tarriff codes class
-    public class Tarriff
+    #region Tariff codes class
+    public class Tariff
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

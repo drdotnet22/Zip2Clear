@@ -1,0 +1,67 @@
+﻿@page "/items"
+
+@using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
+@using Radzen
+
+@inject MyDbContext context
+
+<RadzenDataGrid TItem="Item" Data="@items">
+    <Columns>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Invoice.Number" Title="Invoice Number" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Invoice.Vendor.Name" Title="Vendor" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Department" Title="Department">
+            <FooterTemplate>
+                Totals:
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Quantity" Title="Quantity">
+            <FooterTemplate>
+                @items.Sum(i => i.Quantity)
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.Name" Title="Description" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Value" Title="Value">
+            <FooterTemplate>
+                @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", items.Sum(i => i.Value))
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Weight" Title="Weight">
+            <FooterTemplate>
+                @items.Sum(i => i.Weight)
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.UomValue" Title="UOM Value" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.UomId" Title="UOM ID" TextAlign="TextAlign.Left" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.Number" Title="Tarrif Number" Width="140px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.GeneralRate" Title="General Rate" Width="100px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.ExciseRate" Title="Excise Rate" Width="100px" TextAlign="TextAlign.Center" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [CascadingParameter]
+    protected Declaration declaration { get; set; }
+
+    private IEnumerable<Item> items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if ( declaration != null)
+        {
+            items = await context.Item
+                                .Where(i => i.Invoice.Declaration == declaration)
+                                .Include(i => i.Tariff)
+                                .Include(i => i.Invoice)
+                                .ToListAsync();
+        }
+        else
+        {
+            items = await context.Item
+                                .Include(i => i.Tariff)
+                                .Include(i => i.Invoice)
+                                .ToListAsync();
+        }
+        await base.OnInitializedAsync();
+    }
+}

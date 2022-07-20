@@ -34,7 +34,7 @@
                     TItem="Invoice" Data="@invoices" @ref="invoiceGrid"
                     EditMode="Radzen.DataGridEditMode.Single">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Invoice" Property="InvoiceNumber" Title="Invoice Number" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="Number" Title="Invoice Number" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="Date" Title="Date" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Title="Vendor" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="Shipping" Title="Shipping" Filterable=true Sortable=true />
@@ -51,6 +51,11 @@
                 <div class="content px-4">
                     <InvoiceList />
                 </div>
+            </CascadingValue>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Items" >
+            <CascadingValue Value="declaration" >
+                <ItemList />
             </CascadingValue>
         </RadzenTabsItem>
     </Tabs>
