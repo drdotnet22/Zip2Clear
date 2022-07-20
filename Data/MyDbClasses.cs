@@ -38,8 +38,8 @@ namespace Zip2Clear.Data
         public Declaration? Declaration { get; set; } //This is a navigation property
         public DateTime Date { get; set; }
         public string Number { get; set; }
-        public Guid? VendorId { get; set; }
-        public Vendor? Vendor { get; set; }
+        public Guid VendorId { get; set; }
+        public Vendor Vendor { get; set; }
         public decimal Shipping { get; set; }
         public decimal Insurance { get; set; }
     }
@@ -49,15 +49,15 @@ namespace Zip2Clear.Data
     public class Item
     {
         public Guid Id { get; set; }
-        public Guid? InvoiceId { get; set; }
-        public Invoice? Invoice { get; set; }
+        public Guid InvoiceId { get; set; }
+        public Invoice Invoice { get; set; }
         public string? Department { get; set; }
         public double Quantity { get; set; }
         public decimal Value { get; set; }
         public double? Weight { get; set; }
         public double? UomValue { get; set; }
-        public Guid? TariffId { get; set; }
-        public Tariff? Tariff { get; set; }
+        public Guid TariffId { get; set; }
+        public Tariff Tariff { get; set; }
     }
     #endregion
 
@@ -83,6 +83,15 @@ namespace Zip2Clear.Data
         public string UomId { get; set; }
         public double GeneralRate { get; set; }
         public double ExciseRate { get; set; }
+    }
+    #endregion
+
+    #region Departments
+    public class Department
+    {
+        public Guid Id { get; set; }
+        public string Code { get; set; }
+        public string Email { get; set; }
     }
     #endregion
 }

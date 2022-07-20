@@ -18,15 +18,16 @@ namespace Zip2Clear.Data
         public DbSet<Declaration> Declaration { get; set; }
         public DbSet<Item> Item { get; set; }
         public DbSet<Tariff> Tariff { get; set; }
+        public DbSet<Department> Departments { get; set; }
         #endregion
 
         #region Overidden methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Vendor>().HasData(GetVendors());
-            modelBuilder.Entity<Invoice>().HasData(GetInvoices());
             modelBuilder.Entity<Declaration>().HasData(GetDeclarations());
             modelBuilder.Entity<Tariff>().HasData(GetTariffs());
+            modelBuilder.Entity<Department>().HasData(GetDepartments());
             base.OnModelCreating(modelBuilder);
         }
         #endregion
@@ -53,17 +54,6 @@ namespace Zip2Clear.Data
             };
         }
 
-        private List<Invoice> GetInvoices()
-        {
-            return new List<Invoice>
-            {
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "814184793", Shipping = 0M, Insurance = 150M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "2022ES7023", Shipping = 0M, Insurance = 0M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "2022ES8200", Shipping = 0M, Insurance = 0M },
-                new Invoice { Id = Guid.NewGuid(), Date = DateTime.Now, Number = "11312272", Shipping = 75M, Insurance = 150.23M }
-            };
-        }
-
         private List<Tariff> GetTariffs()
         {
             return new List<Tariff>
@@ -71,6 +61,15 @@ namespace Zip2Clear.Data
                 new Tariff { Id = Guid.NewGuid(), Name = "APPLES", Number = 08081000, UomId = "LB", GeneralRate = 0, ExciseRate = 0 },
                 new Tariff { Id = Guid.NewGuid(), Name = "BATTERIES", Number = 85073000, UomId = "EA", GeneralRate = 45, ExciseRate = 0 },
                 new Tariff { Id = Guid.NewGuid(), Name = "CANDY", Number = 17049010, UomId = "LB", GeneralRate = 60, ExciseRate = 0 }
+            };
+        }
+
+        private List<Department> GetDepartments()
+        {
+            return new List<Department>
+            {
+                new Department { Id = Guid.NewGuid(), Code = "MM", Email = "mmf.lr@emypeople.net" },
+                new Department { Id = Guid.NewGuid(), Code = "MS", Email = "mms.lr@emypeople.net" }
             };
         }
         #endregion
