@@ -20,7 +20,7 @@
 </SfGrid>
 
 @code {
-    public List<Tariff> tariffs { get; set; }
+    public IEnumerable<Tariff> tariffs { get; set; }
     SfGrid<Tariff> Grid;
 
     protected override void OnInitialized()
@@ -33,14 +33,14 @@
         tariffs = dbContext.Tariff.ToList();
     }
 
-    public void ActionBeginHandler(ActionEventArgs<Tariff> Args)
+    private void ActionBeginHandler(ActionEventArgs<Tariff> Args)
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
             if (Args.Action == "Add")
             {
                 Args.Data.Id = Guid.NewGuid();
-                dbContext.Add(Args.Data);
+                dbContext.Tariff.Add(Args.Data);
                 dbContext.SaveChanges();
                 RefreshTariffList();
             }
@@ -57,12 +57,12 @@
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
-            dbContext.Remove(Args.Data);
+            dbContext.Tariff.Remove(Args.Data);
             dbContext.SaveChanges();
             RefreshTariffList();
         }
     }
-    public void ActionCompleteHandler(ActionEventArgs<Tariff> Args)
+    private void ActionCompleteHandler(ActionEventArgs<Tariff> Args)
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {

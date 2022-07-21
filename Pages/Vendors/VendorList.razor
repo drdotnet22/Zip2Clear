@@ -1,8 +1,12 @@
 ﻿@page "/vendors"
 
 @using Zip2Clear.Data
+@using Syncfusion.Blazor.Grids
+@using Microsoft.EntityFrameworkCore
 
-<h3>VendorList</h3>
+@inject MyDbContext dbContext
+
+@*<h3>VendorList</h3>
 <br/>
 <a href="/vendors/new">New</a>
 <br />
@@ -35,19 +39,65 @@
                     <tr><td colspan="6"><strong>No vendors available</strong></td></tr>
                 }
         </tbody>
-</table>
+</table>*@
+
+<SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" >
+    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="Vendor"></GridEvents>
+    <GridColumns>
+        <GridColumn Field="@nameof(Vendor.Name)" HeaderText="Name" ></GridColumn>
+    </GridColumns>
+</SfGrid>
 
 @code {
-    [Inject]
-    public VendorServices vendorService { get; set; }
-    
-    public List<Vendor> Vendors { get; set; }
-    private Vendor selectedVendor;
-    
+    public IEnumerable<Vendor> vendors { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        Vendors = await vendorService.GetVendorAsync();
+        await GetVendors();
         await base.OnInitializedAsync();
+    }
+
+    private async Task GetVendors()
+    {
+        vendors = dbContext.Vendor.ToList();
+    }
+
+    private void ActionBeginHandler(ActionEventArgs<Vendor> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.Id = Guid.NewGuid();
+                dbContext.Vendor.Add(Args.Data);
+                dbContext.SaveChanges();
+                GetVendors();
+            }
+            else
+            {
+                var tariffExists = dbContext.Vendor.FirstOrDefault(t => t.Id == Args.Data.Id);
+                if (tariffExists != null)
+                {
+                    dbContext.Vendor.Update(Args.Data);
+                    dbContext.SaveChanges();
+                    GetVendors();
+                }
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            dbContext.Vendor.Remove(Args.Data);
+            dbContext.SaveChanges();
+            GetVendors();
+        }
+    }
+    private void ActionCompleteHandler(ActionEventArgs<Vendor> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            GetVendors(); //to fetch the updated data from db to Grid
+        }
     }
 
 }
