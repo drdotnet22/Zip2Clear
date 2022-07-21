@@ -1,48 +1,72 @@
 ﻿@page "/tarifflist"
 
-@using Data
+@using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
-@using Radzen
+@using Syncfusion.Blazor.Grids
 
 @inject MyDbContext dbContext
 
-<table class="table table-sm">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Number</th>
-            <th>UOM ID</th>
-            <th>General Rate</th>
-            <th>Excise Rate</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (tariffs.Any())
-        {
-            @foreach (var t in tariffs)
-            {
-                <tr>
-                    <td>@t.Name</td>
-                    <td>@t.Number</td>
-                    <td>@t.UomId</td>
-                    <td>@t.GeneralRate</td>
-                    <td>@t.ExciseRate</td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr><td colspan="6"><strong>No vendors available</strong></td></tr>
-        }
-    </tbody>
-</table>
+<h3>Tariff List</h3>
+
+<SfGrid DataSource="@tariffs" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="Grid">
+    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" ></GridEditSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="Tariff"></GridEvents>
+    <GridColumns>
+        <GridColumn Field="@nameof(Tariff.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Tariff.UomId)" HeaderText="UOM" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Tariff.GeneralRate)" HeaderText="General Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Tariff.ExciseRate)" HeaderText="Excise Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+    </GridColumns>
+</SfGrid>
 
 @code {
-    private IEnumerable<Tariff> tariffs;
+    public List<Tariff> tariffs { get; set; }
+    SfGrid<Tariff> Grid;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        tariffs = await dbContext.Tariff.ToListAsync();
-        await base.OnInitializedAsync();
+        RefreshTariffList();
+    }
+
+    private async Task RefreshTariffList()
+    {
+        tariffs = dbContext.Tariff.ToList();
+    }
+
+    public void ActionBeginHandler(ActionEventArgs<Tariff> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.Id = Guid.NewGuid();
+                dbContext.Add(Args.Data);
+                dbContext.SaveChanges();
+                RefreshTariffList();
+            }
+            else
+            {
+                var tariffExists = dbContext.Tariff.FirstOrDefault(t => t.Id == Args.Data.Id);
+                if (tariffExists != null)
+                {
+                    dbContext.Update(Args.Data);
+                    dbContext.SaveChanges();
+                    RefreshTariffList();
+                }
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            dbContext.Remove(Args.Data);
+            dbContext.SaveChanges();
+            RefreshTariffList();
+        }
+    }
+    public void ActionCompleteHandler(ActionEventArgs<Tariff> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            RefreshTariffList(); //to fetch the updated data from db to Grid
+        }
     }
 }

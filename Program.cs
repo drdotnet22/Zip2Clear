@@ -6,12 +6,17 @@ using Zip2Clear.Data;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+// Register Syncfusion license
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjgxNjA5QDMyMzAyZTMyMmUzMFZnNlJrdTUyYWFNMGZEK1NWVXdkMXFzMTJYSVJBVVpaL1kvOFIwakRMaTQ9");
+builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
 
 // Add Db
 builder.Services.AddDbContext<MyDbContext>(options =>
