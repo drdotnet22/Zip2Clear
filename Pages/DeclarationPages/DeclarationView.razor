@@ -1,5 +1,7 @@
 ﻿@page "/declarations/{declarationId}"
 
+@inherits LayoutComponentBase
+
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
 @using Radzen
@@ -32,7 +34,7 @@
                     TItem="Invoice" Data="@invoices" @ref="invoiceGrid"
                     EditMode="Radzen.DataGridEditMode.Single">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Invoice" Property="InvoiceNumber" Title="Invoice Number" Filterable=true Sortable=true />
+                    <RadzenDataGridColumn TItem="Invoice" Property="Number" Title="Invoice Number" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="Date" Title="Date" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Title="Vendor" Filterable=true Sortable=true />
                     <RadzenDataGridColumn TItem="Invoice" Property="Shipping" Title="Shipping" Filterable=true Sortable=true />
@@ -45,6 +47,16 @@
                     </RadzenDataGridColumn>
                 </Columns>
             </RadzenDataGrid>
+            <CascadingValue Value="invoices" >
+                <div class="content px-4">
+                    <InvoiceList />
+                </div>
+            </CascadingValue>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Items" >
+            <CascadingValue Value="declaration" >
+                <ItemList />
+            </CascadingValue>
         </RadzenTabsItem>
     </Tabs>
 </RadzenTabs>
@@ -79,9 +91,7 @@
 
     private async Task RefreshInvoices()
     {
-        //Invoices = await invoiceService.GetInvoiceAsync();
         invoices = dbContext.Invoice.Where(i => i.Declaration == declaration).Include("Vendor").ToList();
-        //invoices = Invoices.Where(i => i.Declaration == declaration).ToList();
     }
 
     #region Dialog
@@ -95,7 +105,7 @@
                new Dictionary<string, object>() { { "declarationId", declaration.DeclarationNumber } },
                new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
 
-        await RefreshInvoices();
+        RefreshInvoices();
     }
     #endregion
 

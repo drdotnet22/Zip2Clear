@@ -11,14 +11,14 @@
 
 @if (!newInv)
 {
-    <h3>@invoice.Vendor?.Name #@invoice.InvoiceNumber</h3>
+    <h3>@invoice.Vendor?.Name #@invoice.Number</h3>
 }
 
 <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
     <Fields>
         <Field>
             <FieldLabel>Invoice Number</FieldLabel>
-            <TextEdit @ref="@firstEle" @bind-Text="invoice.InvoiceNumber" />
+            <TextEdit @ref="@firstEle" @bind-Text="invoice.Number" />
         </Field>
         <Field>
             <FieldLabel>Vendor</FieldLabel>
@@ -62,7 +62,7 @@
                     Total Qnty: @items?.Sum(i => i.Quantity)
                 </FooterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Item" Property="Tarriff.Name" Title="Description" >
+            <RadzenDataGridColumn TItem="Item" Property="Tariff.Name" Title="Description" >
                 <EditTemplate Context="item">
                     <RadzenTextBox Name="Description" @bind-Value="item.Department" />
                     <RadzenRequiredValidator Text="Description is required!" Component="Description" Popup="true" />
@@ -117,8 +117,8 @@
     bool newInv = false;
     public IEnumerable<Vendor> vendors;
     public string selectedVendor { get; set; }
-    public IEnumerable<Tarriff> tarrifList;
-    public string selectedTarriff { get; set; }
+    public IEnumerable<Tariff> tarifList;
+    public string selectedTariff { get; set; }
     RadzenDataGrid<Item> itemsGrid;
     IList<Item> items;
     Item itemToInsert;
@@ -131,7 +131,7 @@
     protected override async Task OnInitializedAsync()
     {
         vendors = await dbContext.Vendor.ToListAsync();
-        tarrifList = await dbContext.Tarriff.ToListAsync();
+        tarifList = await dbContext.Tariff.ToListAsync();
         if (InvoiceId == "new")
         {
             newInv = true;
@@ -160,7 +160,7 @@
 
     private async Task RefreshItems()
     {
-        items = dbContext.Item.Where(i => i.InvoiceId == invoice.Id).Include(i => i.Invoice).Include(i => i.Tarriff).ToList();
+        items = dbContext.Item.Where(i => i.InvoiceId == invoice.Id).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
     }
 
     private async Task SaveNewInvoice()

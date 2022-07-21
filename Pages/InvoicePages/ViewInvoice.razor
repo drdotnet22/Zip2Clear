@@ -8,75 +8,69 @@
 @inject MyDbContext dbContext
 
 
-<h3>@invoice.Vendor.Name #@invoice.InvoiceNumber</h3>
+<h3>@invoice.Vendor.Name #@invoice.Number</h3>
 <Button Class="btn btn-primary" Clicked="Edit" >Edit</Button>
 <br /><br />
-<RadzenTabs>
-    <Tabs>
-        <RadzenTabsItem Text="Invoice Info">
-            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
-                <Fields>
-                    <Field>
-                        <FieldLabel>Invoice Number</FieldLabel>
-                        <TextEdit Disabled="true" @bind-Text="invoice.InvoiceNumber" />
-                    </Field>
-                    <Field>
-                        <FieldLabel>Vendor</FieldLabel>
-                        <TextEdit Disabled="true" @bind-Text="invoice.Vendor.Name" />
-                    </Field>
-                    <Field>
-                        <FieldLabel>Date</FieldLabel>
-                        <DatePicker TValue="DateTime" Disabled="true" Date="@invoice.Date" />
-                    </Field>
-                </Fields>
-            </Div>
-            <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
-                <Fields>
-                    <Field>
-                        <FieldLabel>Shipping</FieldLabel>
-                        <NumericEdit Disabled="true" TValue="decimal" @bind-Value="invoice.Shipping" />
-                    </Field>
-                    <Field>
-                        <FieldLabel>Insurance/BOL freight</FieldLabel>
-                        <NumericEdit Disabled="true" TValue="decimal" @bind-Value="invoice.Insurance" />
-                    </Field>
-                </Fields>
-            </Div>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="Items" >
-            <RadzenDataGrid TItem="Item" Data="@items" >
-                <Columns>
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Department" Title="Department" >
-                        <FooterTemplate >
-                            Totals:
-                        </FooterTemplate>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Quantity" Title="Quantity" >
-                        <FooterTemplate>
-                            @items.Sum(i => i.Quantity)
-                        </FooterTemplate>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.Name" Title="Description" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Value" Title="Value" >
-                        <FooterTemplate>
-                            @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", items.Sum(i => i.Value))
-                        </FooterTemplate>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Weight" Title="Weight" >
-                        <FooterTemplate>
-                            @items.Sum(i => i.Weight)
-                        </FooterTemplate>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Item" Property="Item.UomValue" Title="UOM Value" TextAlign="TextAlign.Right" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.UomId" Title="UOM ID" TextAlign="TextAlign.Left" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.Number" Title="Tarrif Number" Width="140px" TextAlign="TextAlign.Center" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.GeneralRate" Title="General Rate" Width="100px" TextAlign="TextAlign.Center" />
-                    <RadzenDataGridColumn TItem="Item" Property="Item.Tarriff.ExciseRate" Title="Excise Rate" Width="100px" TextAlign="TextAlign.Center" />
-                </Columns>
-            </RadzenDataGrid>
-        </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
+<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+    <Fields>
+        <Field>
+            <FieldLabel>Invoice Number</FieldLabel>
+            <TextEdit Disabled="true" @bind-Text="invoice.Number" />
+        </Field>
+        <Field>
+            <FieldLabel>Vendor</FieldLabel>
+            <TextEdit Disabled="true" @bind-Text="invoice.Vendor.Name" />
+        </Field>
+        <Field>
+            <FieldLabel>Date</FieldLabel>
+            <DatePicker TValue="DateTime" Disabled="true" Date="@invoice.Date" />
+        </Field>
+    </Fields>
+</Div>
+<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
+    <Fields>
+        <Field>
+            <FieldLabel>Shipping</FieldLabel>
+            <NumericEdit Disabled="true" TValue="decimal" @bind-Value="invoice.Shipping" />
+        </Field>
+        <Field>
+            <FieldLabel>Insurance/BOL freight</FieldLabel>
+            <NumericEdit Disabled="true" TValue="decimal" @bind-Value="invoice.Insurance" />
+        </Field>
+    </Fields>
+</Div>
+
+<RadzenDataGrid TItem="Item" Data="@items" >
+    <Columns>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Department" Title="Department" >
+            <FooterTemplate >
+                Totals:
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Quantity" Title="Quantity" >
+            <FooterTemplate>
+                @items.Sum(i => i.Quantity)
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.Name" Title="Description" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Value" Title="Value" >
+            <FooterTemplate>
+                @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", items.Sum(i => i.Value))
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.Weight" Title="Weight" >
+            <FooterTemplate>
+                @items.Sum(i => i.Weight)
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Item" Property="Item.UomValue" Title="UOM Value" TextAlign="TextAlign.Right" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.UomId" Title="UOM ID" TextAlign="TextAlign.Left" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.Number" Title="Tarrif Number" Width="140px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.GeneralRate" Title="General Rate" Width="100px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="Item" Property="Item.Tariff.ExciseRate" Title="Excise Rate" Width="100px" TextAlign="TextAlign.Center" />
+    </Columns>
+</RadzenDataGrid>
+        
 
 <button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
 <button class="btn btn-danger" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
@@ -99,7 +93,7 @@
                             .ToListAsync();
         invoice = Invoices.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
         items = await dbContext.Item
-                            .Include(i => i.Tarriff)
+                            .Include(i => i.Tariff)
                             .Where(i => i.Invoice == invoice)
                             .ToListAsync();
         await base.OnInitializedAsync();
