@@ -6,46 +6,16 @@
 
 @inject MyDbContext dbContext
 
-@*<h3>VendorList</h3>
-<br/>
-<a href="/vendors/new">New</a>
-<br />
-<table class="table table-sm">
-		<thead>
-			<tr>
-				<th>Vendor</th>
-				<th>Address</th>
-                <th>City</th>
-                <th>Postal Code</th>
-                <th>Country</th>
-			</tr>
-		</thead>
-		<tbody>
-                @if (Vendors.Any())
-                {
-                    @foreach (var vendor in Vendors)
-                    {
-                        <tr>
-                            <td >@vendor.Name</td>
-                            <td>@vendor.AddressLine</td>
-                            <td>@vendor.CityName</td>
-                            <td>@vendor.PostalCode</td>
-                            <td>@vendor.CountryCode</td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr><td colspan="6"><strong>No vendors available</strong></td></tr>
-                }
-        </tbody>
-</table>*@
-
 <SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" >
     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="Vendor"></GridEvents>
     <GridColumns>
-        <GridColumn Field="@nameof(Vendor.Name)" HeaderText="Name" ></GridColumn>
+        <GridColumn Field="@nameof(Vendor.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Vendor.AddressLine)" HeaderText="Address Line" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Vendor.CityName)" HeaderText="City" ></GridColumn>
+        <GridColumn Field="@nameof(Vendor.State)" HeaderText="State"></GridColumn>
+        <GridColumn Field="@nameof(Vendor.PostalCode)" HeaderText="Postal Code"></GridColumn>
+        <GridColumn Field="@nameof(Vendor.CountryCode)" HeaderText="Country" ></GridColumn>
     </GridColumns>
 </SfGrid>
 
