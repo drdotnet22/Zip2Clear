@@ -18,7 +18,8 @@ namespace Zip2Clear.Data
         public DbSet<Declaration> Declaration { get; set; }
         public DbSet<Item> Item { get; set; }
         public DbSet<Tariff> Tariff { get; set; }
-        public DbSet<Department> Departments { get; set; }
+        public DbSet<Department> Department { get; set; }
+        public DbSet<UOM> UOM { get; set; }
         #endregion
 
         #region Overidden methods

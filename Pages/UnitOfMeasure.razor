@@ -1,0 +1,70 @@
+﻿@page "/uom"
+
+@using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
+@using Syncfusion.Blazor.Grids
+
+@inject MyDbContext dbContext
+
+<h3>UOM</h3>
+
+<SfGrid DataSource="@uomList" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true">
+    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UOM"></GridEvents>
+    <GridColumns>
+        <GridColumn Field="@nameof(UOM.Code)" HeaderText="Code" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(UOM.Description)" HeaderText="Description" ></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+@code {
+    public IEnumerable<UOM> uomList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUOMs();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task GetUOMs()
+    {
+        uomList = dbContext.UOM.ToList();
+    }
+
+    private void ActionBeginHandler(ActionEventArgs<UOM> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.Id = Guid.NewGuid();
+                dbContext.UOM.Add(Args.Data);
+                dbContext.SaveChanges();
+                GetUOMs();
+            }
+            else
+            {
+                var uomExists = dbContext.UOM.FirstOrDefault(t => t.Id == Args.Data.Id);
+                if (uomExists != null)
+                {
+                    dbContext.UOM.Update(Args.Data);
+                    dbContext.SaveChanges();
+                    GetUOMs();
+                }
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            dbContext.UOM.Remove(Args.Data);
+            dbContext.SaveChanges();
+            GetUOMs();
+        }
+    }
+    private void ActionCompleteHandler(ActionEventArgs<UOM> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            GetUOMs(); //to fetch the updated data from db to Grid
+        }
+    }
+}

@@ -15,7 +15,7 @@
         <GridColumn Field="@nameof(Vendor.CityName)" HeaderText="City" ></GridColumn>
         <GridColumn Field="@nameof(Vendor.State)" HeaderText="State"></GridColumn>
         <GridColumn Field="@nameof(Vendor.PostalCode)" HeaderText="Postal Code"></GridColumn>
-        <GridColumn Field="@nameof(Vendor.CountryCode)" HeaderText="Country" ></GridColumn>
+        <GridColumn Field="@nameof(Vendor.CountryCode)" HeaderText="Country" DefaultValue="@("US")"></GridColumn>
     </GridColumns>
 </SfGrid>
 

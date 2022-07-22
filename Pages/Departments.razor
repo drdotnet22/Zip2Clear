@@ -1,0 +1,70 @@
+﻿@page "/departments"
+
+@using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
+@using Syncfusion.Blazor.Grids
+
+@inject MyDbContext dbContext
+
+<h3>Departments</h3>
+
+<SfGrid DataSource="@departments" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true">
+    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="Department"></GridEvents>
+    <GridColumns>
+        <GridColumn Field="@nameof(Department.Code)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Department.Email)" HeaderText="Address Line" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+@code {
+    public IEnumerable<Department> departments { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetDepartments();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task GetDepartments()
+    {
+        departments = dbContext.Department.ToList();
+    }
+
+    private void ActionBeginHandler(ActionEventArgs<Department> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                Args.Data.Id = Guid.NewGuid();
+                dbContext.Department.Add(Args.Data);
+                dbContext.SaveChanges();
+                GetDepartments();
+            }
+            else
+            {
+                var departmentExists = dbContext.Department.FirstOrDefault(t => t.Id == Args.Data.Id);
+                if (departmentExists != null)
+                {
+                    dbContext.Department.Update(Args.Data);
+                    dbContext.SaveChanges();
+                    GetDepartments();
+                }
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            dbContext.Department.Remove(Args.Data);
+            dbContext.SaveChanges();
+            GetDepartments();
+        }
+    }
+    private void ActionCompleteHandler(ActionEventArgs<Department> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            GetDepartments(); //to fetch the updated data from db to Grid
+        }
+    }
+}

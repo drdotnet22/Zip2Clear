@@ -86,12 +86,21 @@ namespace Zip2Clear.Data
     }
     #endregion
 
-    #region Departments
+    #region Department
     public class Department
     {
         public Guid Id { get; set; }
         public string Code { get; set; }
         public string Email { get; set; }
+    }
+    #endregion
+
+    #region UOM
+    public class UOM
+    {
+        public Guid Id { get; set; }
+        public string Code { get; set; }
+        public string? Description { get; set; }
     }
     #endregion
 }
