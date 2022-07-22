@@ -44,15 +44,24 @@
                 dbContext.SaveChanges();
                 GetVendors();
             }
-            else
+            else if (Args.Action == "Edit")
             {
-                var vendorExists = dbContext.Vendor.FirstOrDefault(t => t.Id == Args.Data.Id);
-                if (vendorExists != null)
+                try
                 {
-                    dbContext.Vendor.Update(Args.Data);
-                    dbContext.SaveChanges();
-                    GetVendors();
+                    var vendorExists = dbContext.Vendor.Find(Args.Data.Id);
+                    if (vendorExists != null)
+                    {
+                        dbContext.Entry(vendorExists).State = EntityState.Detached;
+                        dbContext.Vendor.Update(Args.Data);
+                        dbContext.SaveChanges();
+                        GetVendors();
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                
             }
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))

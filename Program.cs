@@ -22,6 +22,7 @@ builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation 
 builder.Services.AddDbContext<MyDbContext>(options =>
 {
     options.UseSqlite("Data Source = MyData.db");
+    options.EnableSensitiveDataLogging();
 });
 
 builder.Services.AddScoped<DeclarationServices>();
