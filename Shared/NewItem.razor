@@ -34,7 +34,7 @@
         </Field>
         <Field>
             <FieldLabel>Department</FieldLabel>
-            <TextEdit @bind-Text="item.Department" />
+            <TextEdit />
         </Field>
     </Fields>
 </Div>
@@ -91,11 +91,11 @@
 
     private async Task OnTariffSet()
     {
-        if (item.Tariff.UomId == "EA")
+        if (item.Tariff.UOM.Code == "EA")
         {
             item.UomValue = item.Quantity;
         }
-        else if (item.Tariff.UomId == "LB")
+        else if (item.Tariff.UOM.Code == "LB")
         {
             item.UomValue = item.Weight;
         }

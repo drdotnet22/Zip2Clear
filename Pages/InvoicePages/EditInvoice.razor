@@ -64,7 +64,7 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Item" Property="Tariff.Name" Title="Description" >
                 <EditTemplate Context="item">
-                    <RadzenTextBox Name="Description" @bind-Value="item.Department" />
+                    <RadzenTextBox Name="Description" @bind-Value="item.Tariff.Name" />
                     <RadzenRequiredValidator Text="Description is required!" Component="Description" Popup="true" />
                 </EditTemplate>
             </RadzenDataGridColumn>

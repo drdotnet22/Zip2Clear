@@ -4,6 +4,7 @@
 @using Microsoft.EntityFrameworkCore
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
 
 @inject MyDbContext dbContext
 
@@ -14,12 +15,19 @@
 </div>
 <SfButton OnClick="exportPDF">Export PDF</SfButton>
 <br/><br/>
-<SfGrid DataSource="@tariffs" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="Grid" AllowPdfExport="true" >
+<SfGrid DataSource="@tariffs" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel", "Search" })" AllowPaging="true" AllowSorting="true" AllowFiltering="true" @ref="Grid" AllowPdfExport="true">
     <GridEditSettings AllowAdding="true" AllowDeleting="@editable" AllowEditing="@editable" ShowConfirmDialog="false"></GridEditSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Tariff" ></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(Tariff.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
-        <GridColumn Field="@nameof(Tariff.UomId)" HeaderText="UOM" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <!-- GridForeignColumn is preventing the datagrid from loading records -->
+        <GridForeignColumn TValue="UOM" Field="@nameof(Tariff.UOM)" HeaderText="UOM" ForeignKeyValue="Code" ForeignDataSource="uomList">
+            <EditTemplate>
+                <SfComboBox TItem="UOM" TValue="UOM" PopupHeight="230px" @bind-Value="@((context as Tariff).UOM)"  DataSource="uomList">
+                    <ComboBoxFieldSettings Value="Code"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </EditTemplate>
+        </GridForeignColumn>
         <GridColumn Field="@nameof(Tariff.Number)" HeaderText="Tariff Number" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Tariff.GeneralRate)" HeaderText="General Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Tariff.ExciseRate)" HeaderText="Excise Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
@@ -28,17 +36,19 @@
 
 @code {
     private bool editable = false;
-    public IEnumerable<Tariff> tariffs { get; set; }
+    public List<Tariff> tariffs { get; set; }
     SfGrid<Tariff> Grid;
+    private List<UOM> uomList { get; set; }
 
     protected override void OnInitialized()
     {
+        uomList = dbContext.UOM.ToList();
         RefreshTariffList();
     }
 
     private async Task RefreshTariffList()
     {
-        tariffs = dbContext.Tariff.ToList();
+        tariffs = dbContext.Tariff.Include(t => t.UOM).ToList();
     }
 
     private void ActionBeginHandler(ActionEventArgs<Tariff> Args)

@@ -6,9 +6,9 @@
 
 @inject MyDbContext dbContext
 
-<SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" >
-    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" ></GridEditSettings>
-    <GridEvents OnActionBegin="ActionBeginHandler" TValue="Vendor"></GridEvents>
+<SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="vendorGrid" >
+    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" ShowConfirmDialog="false"></GridEditSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Vendor"></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(Vendor.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Vendor.AddressLine)" HeaderText="Address Line" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
@@ -20,6 +20,7 @@
 </SfGrid>
 
 @code {
+    SfGrid<Vendor> vendorGrid;
     public List<Vendor> vendors { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -70,6 +71,11 @@
             dbContext.SaveChanges();
             GetVendors();
         }
+    }
+
+    private void CellSaveHandler(CellSaveArgs<Vendor> args)
+    {
+        vendorGrid.EndEditAsync();
     }
 
 }

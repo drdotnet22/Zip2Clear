@@ -27,7 +27,6 @@ namespace Zip2Clear.Data
         {
             modelBuilder.Entity<Vendor>().HasData(GetVendors());
             modelBuilder.Entity<Declaration>().HasData(GetDeclarations());
-            modelBuilder.Entity<Tariff>().HasData(GetTariffs());
             modelBuilder.Entity<Department>().HasData(GetDepartments());
             base.OnModelCreating(modelBuilder);
         }
@@ -52,16 +51,6 @@ namespace Zip2Clear.Data
             {
                 new Declaration { Id = Guid.NewGuid(), Regime = "4", Type = "400", ModeOfTransport = "1", DeclarationOffice = "SAQPDK", DeclarationNumber = "2022DEC0000845484", CountryOfOrigin = "US", CountryOfDestination = "BS", PortOfEntry = "SAQ", PortOfExit = "USPVS", Exporter = "Mennonite Messianic Mission", Importer = "Mennonite Messianic Mission", CreatedDate = DateTime.Now, SubmittedDate = DateTime.Now, TotalPackageQnty = 1, TotalPackageQntyUOM = "EA", TotalGrossMassMeasureQnty = 390, TotalGrossMassMeasureUOM = "LB", Submitted = true, Status = "Compliance", ManifestNumber = "MSTRNO30613", BOLnumber = "PEVMOB005095" },
                 new Declaration { Id = Guid.NewGuid(), Regime = "4", Type = "400", ModeOfTransport = "1", DeclarationOffice = "SAQPDK", DeclarationNumber = "2022DEC0000845474", CountryOfOrigin = "US", CountryOfDestination = "BS", PortOfEntry = "SAQ", PortOfExit = "USPVS", Exporter = "Mennonite Messianic Mission", Importer = "Mennonite Messianic Mission", CreatedDate = DateTime.Now, SubmittedDate = DateTime.Now, TotalPackageQnty = 1, TotalPackageQntyUOM = "EA", TotalGrossMassMeasureQnty = 40, TotalGrossMassMeasureUOM = "LB", Submitted = true, Status = "Compliance", ManifestNumber = "MSTRNO30613", BOLnumber = "PEVMOB005096" }
-            };
-        }
-
-        private List<Tariff> GetTariffs()
-        {
-            return new List<Tariff>
-            {
-                new Tariff { Id = Guid.NewGuid(), Name = "APPLES", Number = 08081000, UomId = "LB", GeneralRate = 0, ExciseRate = 0 },
-                new Tariff { Id = Guid.NewGuid(), Name = "BATTERIES", Number = 85073000, UomId = "EA", GeneralRate = 45, ExciseRate = 0 },
-                new Tariff { Id = Guid.NewGuid(), Name = "CANDY", Number = 17049010, UomId = "LB", GeneralRate = 60, ExciseRate = 0 }
             };
         }
 

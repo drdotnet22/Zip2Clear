@@ -51,13 +51,14 @@ namespace Zip2Clear.Data
         public Guid Id { get; set; }
         public Guid InvoiceId { get; set; }
         public Invoice Invoice { get; set; }
-        public string? Department { get; set; }
         public double Quantity { get; set; }
         public decimal Value { get; set; }
         public double? Weight { get; set; }
         public double? UomValue { get; set; }
         public Guid TariffId { get; set; }
         public Tariff Tariff { get; set; }
+        public Guid? DepartmentId { get; set; }
+        public Department? Department { get; set; }
     }
     #endregion
 
@@ -80,9 +81,10 @@ namespace Zip2Clear.Data
         public Guid Id { get; set; }
         public string Name { get; set; }
         public double Number { get; set; }
-        public string UomId { get; set; }
         public double GeneralRate { get; set; }
         public double ExciseRate { get; set; }
+        public Guid? UomId { get; set; }
+        public UOM UOM { get; set; }
     }
     #endregion
 
