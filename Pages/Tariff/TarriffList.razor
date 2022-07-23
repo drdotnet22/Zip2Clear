@@ -3,23 +3,31 @@
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Buttons
 
 @inject MyDbContext dbContext
 
 <h3>Tariff List</h3>
-
-<SfGrid DataSource="@tariffs" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="Grid">
-    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
-    <GridEvents OnActionBegin="ActionBeginHandler" TValue="Tariff"></GridEvents>
+<div>
+    <label style="padding: 10px 24px 10px 0">Editable</label>
+    <SfCheckBox @bind-Checked="@editable"></SfCheckBox>
+</div>
+<SfButton OnClick="exportPDF">Export PDF</SfButton>
+<br/><br/>
+<SfGrid DataSource="@tariffs" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="Grid" AllowPdfExport="true" >
+    <GridEditSettings AllowAdding="true" AllowDeleting="@editable" AllowEditing="@editable" ShowConfirmDialog="false"></GridEditSettings>
+    <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Tariff" ></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(Tariff.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Tariff.UomId)" HeaderText="UOM" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Tariff.Number)" HeaderText="Tariff Number" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Tariff.GeneralRate)" HeaderText="General Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Tariff.ExciseRate)" HeaderText="Excise Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
     </GridColumns>
 </SfGrid>
 
 @code {
+    private bool editable = false;
     public IEnumerable<Tariff> tariffs { get; set; }
     SfGrid<Tariff> Grid;
 
@@ -37,6 +45,7 @@
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
+            Console.WriteLine(Args.Action);
             if (Args.Action == "Add")
             {
                 Args.Data.Id = Guid.NewGuid();
@@ -69,9 +78,59 @@
             dbContext.SaveChanges();
             RefreshTariffList();
         }
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.BatchSave))
-        {
+    }
 
+    private void ActionEndHandler(ActionEventArgs<Tariff> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            RefreshTariffList();
         }
     }
+
+    private void CellSaveHandler(CellSaveArgs<Tariff> args)
+    {
+        Grid.EndEditAsync();
+    }
+
+    private void exportPDF()
+    {
+        PdfExportProperties exportProperties = new PdfExportProperties();
+        exportProperties.FileName = "Tariff_List.pdf";
+        Grid.ExportToPdfAsync(exportProperties);
+    }
 }
+
+<style>
+    /* Switch Styles */
+    .content-wrapper {
+        margin-top: 47px;
+    }
+
+    .switch-control .heading {
+        text-indent: 15px;
+        padding: 15px 0;
+    }
+
+    .switch-control div {
+        display: flex;
+        align-items: center;
+    }
+
+    .switch-control {
+        margin: 0 auto;
+        width: 115px;
+    }
+
+        .switch-control label {
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 400;
+            font-size: 13px;
+        }
+
+        .switch-control .e-disabled {
+            pointer-events: none;
+        }
+</style>

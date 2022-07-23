@@ -8,7 +8,7 @@
 
 <SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" >
     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" ></GridEditSettings>
-    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="Vendor"></GridEvents>
+    <GridEvents OnActionBegin="ActionBeginHandler" TValue="Vendor"></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(Vendor.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Vendor.AddressLine)" HeaderText="Address Line" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
@@ -69,13 +69,6 @@
             dbContext.Vendor.Remove(Args.Data);
             dbContext.SaveChanges();
             GetVendors();
-        }
-    }
-    private void ActionCompleteHandler(ActionEventArgs<Vendor> Args)
-    {
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
-        {
-            GetVendors(); //to fetch the updated data from db to Grid
         }
     }
 
