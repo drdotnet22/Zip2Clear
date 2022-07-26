@@ -70,7 +70,7 @@
 
     private async Task EditInvoice(Invoice invoice)
     {
-        string invoiceId = invoice.Id.ToString();
+        string invoiceId = invoice.InvoiceId.ToString();
         NavigationManager.NavigateTo($"/invoices/{invoiceId}/edit");
     }
 
@@ -88,7 +88,7 @@
     
     private void ViewInvoice(Invoice invoice)
     {
-        string invoiceId = invoice.Id.ToString();
+        string invoiceId = invoice.InvoiceId.ToString();
         NavigationManager.NavigateTo($"/invoices/{invoiceId}/view");
     }
 }

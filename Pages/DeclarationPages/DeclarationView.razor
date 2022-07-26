@@ -80,7 +80,7 @@
 
     private async Task LoadDeclarationAsync()
     {
-        declaration = declarationList.FirstOrDefault(d => d.Id.ToString() == declarationId);
+        declaration = declarationList.FirstOrDefault(d => d.DeclarationId.ToString() == declarationId);
         await base.OnParametersSetAsync();
     }
 

@@ -91,7 +91,7 @@
         Invoices = await dbContext.Invoice
                             .Include("Vendor")
                             .ToListAsync();
-        invoice = Invoices.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
+        invoice = Invoices.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
         items = await dbContext.Item
                             .Include(i => i.Tariff)
                             .Where(i => i.Invoice == invoice)

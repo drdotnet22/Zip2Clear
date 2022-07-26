@@ -136,7 +136,7 @@
         {
             newInv = true;
             invDate = DateTime.Now;
-            invoice.Id = Guid.NewGuid();
+            invoice.InvoiceId = Guid.NewGuid();
         }
         else
         {
@@ -160,7 +160,7 @@
 
     private async Task RefreshItems()
     {
-        items = dbContext.Item.Where(i => i.InvoiceId == invoice.Id).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
+        items = dbContext.Item.Where(i => i.InvoiceId == invoice.InvoiceId).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
     }
 
     private async Task SaveNewInvoice()
@@ -174,7 +174,7 @@
     private async Task LoadInvoiceAsync()
     {
         Invoices = await dbContext.Invoice.Include(i => i.Vendor).ToListAsync();
-        invoice = Invoices.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
+        invoice = Invoices.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
     }
 
     private async Task UpdateInvoice()
@@ -213,7 +213,7 @@
     void OnCreateItemRow(Item item)
     {
         dbContext.Item.Add(item);
-        item.Id = Guid.NewGuid();
+        item.ItemId = Guid.NewGuid();
 
         //for demo
         item.UomValue = 15;
@@ -273,7 +273,7 @@
     public async Task AddItemDialog()
     {
         await DialogService.OpenAsync<Shared.NewItem>("New Item",
-               new Dictionary<string, object>() { { "InvoiceId", invoice.Id.ToString() } },
+               new Dictionary<string, object>() { { "InvoiceId", invoice.InvoiceId.ToString() } },
                new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
 
         await RefreshItems();

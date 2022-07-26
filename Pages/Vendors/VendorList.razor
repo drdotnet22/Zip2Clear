@@ -6,7 +6,8 @@
 
 @inject MyDbContext dbContext
 
-<SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="vendorGrid" >
+<SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="vendorGrid" RowHeight="40"
+    AllowFiltering="true" AllowSorting="true" >
     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" ShowConfirmDialog="false"></GridEditSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Vendor"></GridEvents>
     <GridColumns>

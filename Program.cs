@@ -9,6 +9,7 @@ using Blazorise.Icons.FontAwesome;
 using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSyncfusionBlazor();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

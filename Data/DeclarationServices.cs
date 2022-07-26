@@ -53,7 +53,7 @@ namespace Zip2Clear.Data
         {
             try
             {
-                var declarationExist = dbContext.Declaration.FirstOrDefault(p => p.Id == declaration.Id);
+                var declarationExist = dbContext.Declaration.FirstOrDefault(p => p.DeclarationId == declaration.DeclarationId);
                 if (declarationExist != null)
                 {
                     dbContext.Update(declaration);

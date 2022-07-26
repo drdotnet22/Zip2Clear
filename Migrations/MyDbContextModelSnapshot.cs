@@ -19,7 +19,7 @@ namespace Zip2Clear.Migrations
 
             modelBuilder.Entity("Zip2Clear.Data.Declaration", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DeclarationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -99,18 +99,18 @@ namespace Zip2Clear.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("DeclarationId");
 
                     b.ToTable("Declaration");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("67685d53-8a52-400e-8753-5c260ec4ee77"),
+                            DeclarationId = new Guid("3235faef-c77f-44c2-be06-de6e118f15a2"),
                             BOLnumber = "PEVMOB005095",
                             CountryOfDestination = "BS",
                             CountryOfOrigin = "US",
-                            CreatedDate = new DateTime(2022, 7, 23, 17, 57, 48, 58, DateTimeKind.Local).AddTicks(1540),
+                            CreatedDate = new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2468),
                             DeclarationNumber = "2022DEC0000845484",
                             DeclarationOffice = "SAQPDK",
                             Exporter = "Mennonite Messianic Mission",
@@ -122,7 +122,7 @@ namespace Zip2Clear.Migrations
                             Regime = "4",
                             Status = "Compliance",
                             Submitted = true,
-                            SubmittedDate = new DateTime(2022, 7, 23, 17, 57, 48, 58, DateTimeKind.Local).AddTicks(1569),
+                            SubmittedDate = new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2500),
                             TotalGrossMassMeasureQnty = 390.0,
                             TotalGrossMassMeasureUOM = "LB",
                             TotalPackageQnty = 1.0,
@@ -131,11 +131,11 @@ namespace Zip2Clear.Migrations
                         },
                         new
                         {
-                            Id = new Guid("31958655-f36f-4139-bc5a-5e5bd41a83c7"),
+                            DeclarationId = new Guid("00002a06-f731-4e07-b3e1-d861dc50c1a3"),
                             BOLnumber = "PEVMOB005096",
                             CountryOfDestination = "BS",
                             CountryOfOrigin = "US",
-                            CreatedDate = new DateTime(2022, 7, 23, 17, 57, 48, 58, DateTimeKind.Local).AddTicks(1576),
+                            CreatedDate = new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2507),
                             DeclarationNumber = "2022DEC0000845474",
                             DeclarationOffice = "SAQPDK",
                             Exporter = "Mennonite Messianic Mission",
@@ -147,7 +147,7 @@ namespace Zip2Clear.Migrations
                             Regime = "4",
                             Status = "Compliance",
                             Submitted = true,
-                            SubmittedDate = new DateTime(2022, 7, 23, 17, 57, 48, 58, DateTimeKind.Local).AddTicks(1578),
+                            SubmittedDate = new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2509),
                             TotalGrossMassMeasureQnty = 40.0,
                             TotalGrossMassMeasureUOM = "LB",
                             TotalPackageQnty = 1.0,
@@ -158,7 +158,7 @@ namespace Zip2Clear.Migrations
 
             modelBuilder.Entity("Zip2Clear.Data.Department", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DepartmentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -170,20 +170,20 @@ namespace Zip2Clear.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("DepartmentId");
 
                     b.ToTable("Department");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("40f705a2-2ab6-4da3-a493-6db983a9d682"),
+                            DepartmentId = new Guid("280cc0e9-1a04-4e17-b0ff-8c0323130ac8"),
                             Code = "MM",
                             Email = "mmf.lr@emypeople.net"
                         },
                         new
                         {
-                            Id = new Guid("b55d8f04-095e-4b77-b10b-a81a941b6d66"),
+                            DepartmentId = new Guid("5be5061a-f276-4b56-9092-87b9926a48c6"),
                             Code = "MS",
                             Email = "mms.lr@emypeople.net"
                         });
@@ -191,7 +191,7 @@ namespace Zip2Clear.Migrations
 
             modelBuilder.Entity("Zip2Clear.Data.Invoice", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("InvoiceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -214,7 +214,7 @@ namespace Zip2Clear.Migrations
                     b.Property<Guid>("VendorId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("InvoiceId");
 
                     b.HasIndex("DeclarationId");
 
@@ -225,7 +225,7 @@ namespace Zip2Clear.Migrations
 
             modelBuilder.Entity("Zip2Clear.Data.Item", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -250,7 +250,7 @@ namespace Zip2Clear.Migrations
                     b.Property<double?>("Weight")
                         .HasColumnType("REAL");
 
-                    b.HasKey("Id");
+                    b.HasKey("ItemId");
 
                     b.HasIndex("DepartmentId");
 
@@ -263,7 +263,7 @@ namespace Zip2Clear.Migrations
 
             modelBuilder.Entity("Zip2Clear.Data.Tariff", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("TariffId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -283,16 +283,16 @@ namespace Zip2Clear.Migrations
                     b.Property<Guid?>("UomId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("TariffId");
 
                     b.HasIndex("UomId");
 
                     b.ToTable("Tariff");
                 });
 
-            modelBuilder.Entity("Zip2Clear.Data.UOM", b =>
+            modelBuilder.Entity("Zip2Clear.Data.Uom", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("UomId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -303,9 +303,9 @@ namespace Zip2Clear.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("UomId");
 
-                    b.ToTable("UOM");
+                    b.ToTable("Uom");
                 });
 
             modelBuilder.Entity("Zip2Clear.Data.Vendor", b =>
@@ -341,7 +341,7 @@ namespace Zip2Clear.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("991d13aa-26ab-47c6-b83f-6e466647cce7"),
+                            Id = new Guid("ddffb366-2e8a-43ef-8cc0-4f9d4fadc95d"),
                             AddressLine = "PO BOX 1723",
                             CityName = "OKEECHOBEE",
                             CountryCode = "US",
@@ -351,7 +351,7 @@ namespace Zip2Clear.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0069d576-fd87-47ae-9dfa-95611bff878f"),
+                            Id = new Guid("1258df26-234d-4074-8f5d-3da2e5f21035"),
                             AddressLine = "12029 W DOPHIN CT",
                             CityName = "HOMOSASSA",
                             CountryCode = "US",
@@ -361,7 +361,7 @@ namespace Zip2Clear.Migrations
                         },
                         new
                         {
-                            Id = new Guid("abac31c0-f9f6-4449-98ac-3521e9ab8b4e"),
+                            Id = new Guid("0fb26ff2-3493-41b5-bf5d-461f663c4dc6"),
                             AddressLine = "1301 SW 2ND ST",
                             CityName = "POMPANO BEACH",
                             CountryCode = "US",
@@ -371,7 +371,7 @@ namespace Zip2Clear.Migrations
                         },
                         new
                         {
-                            Id = new Guid("cd2c3e61-2052-4cc0-84a0-0c4c7e0312ab"),
+                            Id = new Guid("65ead5dc-18d2-45fe-ae24-841fc7527784"),
                             AddressLine = "2968 RAVENSWOOD ROAD",
                             CityName = "FORT LAUDERDALE",
                             CountryCode = "US",
@@ -381,7 +381,7 @@ namespace Zip2Clear.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1bb4e6bb-a23c-46c4-932c-8a9d48239db3"),
+                            Id = new Guid("167247cf-24f4-4a53-8ba3-dfad500207aa"),
                             AddressLine = "4300 STEWART ROAD",
                             CityName = "LAKELAND",
                             CountryCode = "US",
@@ -435,11 +435,11 @@ namespace Zip2Clear.Migrations
 
             modelBuilder.Entity("Zip2Clear.Data.Tariff", b =>
                 {
-                    b.HasOne("Zip2Clear.Data.UOM", "UOM")
+                    b.HasOne("Zip2Clear.Data.Uom", "Uom")
                         .WithMany()
                         .HasForeignKey("UomId");
 
-                    b.Navigation("UOM");
+                    b.Navigation("Uom");
                 });
 #pragma warning restore 612, 618
         }

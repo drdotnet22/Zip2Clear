@@ -1,0 +1,84 @@
+﻿@page "/DataGrid"
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor
+
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class='e-mastertext'><b>Local Data</b></div>
+            <SfGrid DataSource="@GridData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" Toolbar="@(new List<string>() {"Add", "Edit", "Delete", "Update","Cancel","Search" })">
+                <GridFilterSettings Type="FilterType.Menu"></GridFilterSettings>
+                <GridPageSettings PageSize="5"></GridPageSettings>
+                <GridEditSettings AllowEditing="true" AllowAdding="true" AllowDeleting="true"></GridEditSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(OrdersDetails.OrderID) HeaderText="Order ID" TextAlign="TextAlign.Right" IsPrimaryKey="true" Width="100" ValidationRules="@(new ValidationRules{ Required=true, Number=true})"></GridColumn>
+                    <GridForeignColumn Field=@nameof(OrdersDetails.EmployeeID) HeaderText="First Name" ForeignKeyValue="FirstName" ValidationRules="@(new ValidationRules{ Required=true})" ForeignDataSource="@Employees" Width="150"></GridForeignColumn>
+                    <GridColumn Field=@nameof(OrdersDetails.Freight) Format="C2" TextAlign="TextAlign.Right" Width="160"></GridColumn>
+                    <GridColumn Field=@nameof(OrdersDetails.OrderDate) HeaderText="Order Date" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right" Width="130"></GridColumn>
+                    <GridColumn Field=@nameof(OrdersDetails.ShipCountry) HeaderText="Ship Country" DefaultValue="DefaultShipCountry" Width="140" EditType="EditType.DropDownEdit"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+            <div class='e-mastertext'><b>Remote Data</b></div>
+            <SfGrid DataSource="@GridData" AllowPaging="true" AllowFiltering="true" AllowSorting="true" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update","Cancel" })">
+                <GridFilterSettings Type="FilterType.Menu"></GridFilterSettings>
+                <GridPageSettings PageSize="5"></GridPageSettings>
+                <GridEditSettings AllowEditing="true" AllowAdding="true" AllowDeleting="true"></GridEditSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(OrdersDetails.OrderID) HeaderText="Order ID" TextAlign="TextAlign.Right" IsPrimaryKey="true" Width="100" ValidationRules="@(new ValidationRules{ Required=true, Number=true})"></GridColumn>
+                    <GridForeignColumn TValue="EmployeeData" Field=@nameof(OrdersDetails.EmployeeID) HeaderText="First Name" ForeignKeyValue="FirstName" Width="150" ValidationRules="@(new ValidationRules{ Required=true})">
+                        <Syncfusion.Blazor.Data.SfDataManager Url="https://js.syncfusion.com/demos/ejServices/Wcf/Northwind.svc/Employees" CrossDomain="true" Adaptor="Adaptors.ODataAdaptor">
+                        </Syncfusion.Blazor.Data.SfDataManager>
+                    </GridForeignColumn>
+                    <GridColumn Field=@nameof(OrdersDetails.OrderDate) HeaderText="Order Date" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right" Width="130"></GridColumn>
+                    <GridColumn Field=@nameof(OrdersDetails.Freight) Format="C2" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                    <GridColumn Field=@nameof(OrdersDetails.ShipCountry) HeaderText="Ship Country" Width="140" DefaultValue="DefaultShipCountry" EditType="EditType.DropDownEdit"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+</div>
+@code {
+    public List<OrdersDetails> GridData { get; set; }
+    public List<EmployeeData> Employees { get; set; }
+    public string DefaultShipCountry { get; set; } = "French";
+    protected override void OnInitialized()
+    {
+        GridData = Enumerable.Range(1, 75).Select(x => new OrdersDetails()
+            {
+                OrderID = 1000 + x,
+                EmployeeID = new Random().Next(1, 9),
+                Freight = 2.1 * x,
+                OrderDate = DateTime.Now.AddDays(-x),
+                ShipCountry = (new string[] { "USA", "UK", "London", "French", "Germany" })[new Random().Next(5)],
+            }).ToList();
+        Employees = new List<EmployeeData> {
+            new EmployeeData { EmployeeID = 1, FirstName = "Nancy"},
+            new EmployeeData { EmployeeID = 2, FirstName = "Andrew"},
+            new EmployeeData { EmployeeID = 3, FirstName = "Janet"},
+            new EmployeeData { EmployeeID = 4, FirstName = "Margaret"},
+            new EmployeeData { EmployeeID = 5, FirstName = "Steven"},
+            new EmployeeData { EmployeeID = 6, FirstName = "Anne"},
+            new EmployeeData { EmployeeID = 7, FirstName = "Laura"},
+            new EmployeeData { EmployeeID = 8, FirstName = "Michael"},
+            new EmployeeData { EmployeeID = 9, FirstName = "Robert"},
+        };
+    }
+    public class EmployeeData
+    {
+        public int? EmployeeID { get; set; }
+        public string FirstName { get; set; }
+    }
+
+    public class OrdersDetails
+    {
+        public int OrderID { get; set; }
+        public int EmployeeID { get; set; }
+        public double Freight { get; set; }
+        public DateTime OrderDate { get; set; }
+        public string ShipCountry { get; set; }
+    }
+}
+ 
+
+
+

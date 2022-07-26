@@ -10,15 +10,15 @@
 
 <SfGrid DataSource="@uomList" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true">
     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings>
-    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UOM"></GridEvents>
+    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="Uom"></GridEvents>
     <GridColumns>
-        <GridColumn Field="@nameof(UOM.Code)" HeaderText="Code" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
-        <GridColumn Field="@nameof(UOM.Description)" HeaderText="Description" ></GridColumn>
+        <GridColumn Field="@nameof(Uom.Code)" HeaderText="Code" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Uom.Description)" HeaderText="Description" ></GridColumn>
     </GridColumns>
 </SfGrid>
 
 @code {
-    public IEnumerable<UOM> uomList { get; set; }
+    public IEnumerable<Uom> uomList { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -28,26 +28,26 @@
 
     private async Task GetUOMs()
     {
-        uomList = dbContext.UOM.ToList();
+        uomList = dbContext.Uom.ToList();
     }
 
-    private void ActionBeginHandler(ActionEventArgs<UOM> Args)
+    private void ActionBeginHandler(ActionEventArgs<Uom> Args)
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
             if (Args.Action == "Add")
             {
-                Args.Data.Id = Guid.NewGuid();
-                dbContext.UOM.Add(Args.Data);
+                Args.Data.UomId = Guid.NewGuid();
+                dbContext.Uom.Add(Args.Data);
                 dbContext.SaveChanges();
                 GetUOMs();
             }
             else
             {
-                var uomExists = dbContext.UOM.FirstOrDefault(t => t.Id == Args.Data.Id);
+                var uomExists = dbContext.Uom.FirstOrDefault(u => u.UomId == Args.Data.UomId);
                 if (uomExists != null)
                 {
-                    dbContext.UOM.Update(Args.Data);
+                    dbContext.Uom.Update(Args.Data);
                     dbContext.SaveChanges();
                     GetUOMs();
                 }
@@ -55,12 +55,12 @@
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
-            dbContext.UOM.Remove(Args.Data);
+            dbContext.Uom.Remove(Args.Data);
             dbContext.SaveChanges();
             GetUOMs();
         }
     }
-    private void ActionCompleteHandler(ActionEventArgs<UOM> Args)
+    private void ActionCompleteHandler(ActionEventArgs<Uom> Args)
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {

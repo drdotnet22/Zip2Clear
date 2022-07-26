@@ -56,7 +56,7 @@
     protected override async Task OnInitializedAsync()
     {
         invoiceList = await dbContext.Invoice.ToListAsync();
-        invoice = invoiceList.FirstOrDefault(i => i.Id.ToString() == InvoiceId);
+        invoice = invoiceList.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
         tariffs = await dbContext.Tariff.ToListAsync();
         AddItem();
     }
@@ -64,7 +64,7 @@
     private async Task AddItem()
     {
         item = new Item();
-        item.Id = Guid.NewGuid();
+        item.ItemId = Guid.NewGuid();
         item.Invoice = invoice;
     }
 
@@ -91,11 +91,11 @@
 
     private async Task OnTariffSet()
     {
-        if (item.Tariff.UOM.Code == "EA")
+        if (item.Tariff.Uom.Code == "EA")
         {
             item.UomValue = item.Quantity;
         }
-        else if (item.Tariff.UOM.Code == "LB")
+        else if (item.Tariff.Uom.Code == "LB")
         {
             item.UomValue = item.Weight;
         }

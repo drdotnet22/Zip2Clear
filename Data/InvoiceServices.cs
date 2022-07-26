@@ -54,7 +54,7 @@ namespace Zip2Clear.Data
         {
             try
             {
-                var invoiceExist = dbContext.Invoice.FirstOrDefault(p => p.Id == invoice.Id);
+                var invoiceExist = dbContext.Invoice.FirstOrDefault(p => p.InvoiceId == invoice.InvoiceId);
                 if (invoiceExist != null)
                 {
                     dbContext.Update(invoice);

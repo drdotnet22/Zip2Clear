@@ -155,8 +155,8 @@
     {
         vendors = await dbContext.Vendor.ToListAsync();
         tarifList = await dbContext.Tariff.ToListAsync();
-        NewInvoice.Id = Guid.NewGuid();
-        items = dbContext.Item.Where(i => i.InvoiceId == NewInvoice.Id).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
+        NewInvoice.InvoiceId = Guid.NewGuid();
+        items = dbContext.Item.Where(i => i.InvoiceId == NewInvoice.InvoiceId).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
         await base.OnInitializedAsync();
     }
 
@@ -204,7 +204,7 @@
     void OnCreateItemRow(Item item)
     {
         dbContext.Item.Add(item);
-        item.Id = Guid.NewGuid();
+        item.ItemId = Guid.NewGuid();
 
         //for demo
         item.UomValue = 15;

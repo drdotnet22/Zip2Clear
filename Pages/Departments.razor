@@ -22,11 +22,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetDepartments();
+        GetDepartments();
         await base.OnInitializedAsync();
     }
 
-    private async Task GetDepartments()
+    private void GetDepartments()
     {
         departments = dbContext.Department.ToList();
     }
@@ -37,14 +37,14 @@
         {
             if (Args.Action == "Add")
             {
-                Args.Data.Id = Guid.NewGuid();
+                Args.Data.DepartmentId = Guid.NewGuid();
                 dbContext.Department.Add(Args.Data);
                 dbContext.SaveChanges();
                 GetDepartments();
             }
             else
             {
-                var departmentExists = dbContext.Department.FirstOrDefault(t => t.Id == Args.Data.Id);
+                var departmentExists = dbContext.Department.FirstOrDefault(d => d.DepartmentId == Args.Data.DepartmentId);
                 if (departmentExists != null)
                 {
                     dbContext.Department.Update(Args.Data);

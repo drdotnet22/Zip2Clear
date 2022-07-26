@@ -5,7 +5,7 @@ namespace Zip2Clear.Data
     #region Declaration class
     public class Declaration
     {
-        public Guid Id { get; set; }
+        public Guid DeclarationId { get; set; }
         public bool Submitted { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime SubmittedDate { get; set; }
@@ -33,7 +33,7 @@ namespace Zip2Clear.Data
     #region Invoice class
     public class Invoice
     {
-        public Guid Id { get; set; }
+        public Guid InvoiceId { get; set; }
         public Guid? DeclarationId { get; set; } //This is a foreign key
         public Declaration? Declaration { get; set; } //This is a navigation property
         public DateTime Date { get; set; }
@@ -48,7 +48,7 @@ namespace Zip2Clear.Data
     #region Item class
     public class Item
     {
-        public Guid Id { get; set; }
+        public Guid ItemId { get; set; }
         public Guid InvoiceId { get; set; }
         public Invoice Invoice { get; set; }
         public double Quantity { get; set; }
@@ -78,29 +78,29 @@ namespace Zip2Clear.Data
     #region Tariff codes class
     public class Tariff
     {
-        public Guid Id { get; set; }
+        public Guid TariffId { get; set; }
         public string Name { get; set; }
         public double Number { get; set; }
         public double GeneralRate { get; set; }
         public double ExciseRate { get; set; }
         public Guid? UomId { get; set; }
-        public UOM UOM { get; set; }
+        public Uom Uom { get; set; }
     }
     #endregion
 
     #region Department
     public class Department
     {
-        public Guid Id { get; set; }
+        public Guid DepartmentId { get; set; }
         public string Code { get; set; }
         public string Email { get; set; }
     }
     #endregion
 
     #region UOM
-    public class UOM
+    public class Uom
     {
-        public Guid Id { get; set; }
+        public Guid UomId { get; set; }
         public string Code { get; set; }
         public string? Description { get; set; }
     }

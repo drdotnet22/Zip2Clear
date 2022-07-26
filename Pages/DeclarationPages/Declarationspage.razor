@@ -1,8 +1,10 @@
 ﻿@page "/declarations"
 
 @using Zip2Clear.Data
+@using Microsoft.EntityFrameworkCore
 
 @inject NavigationManager NavigationManager
+@inject MyDbContext dbContext
 
 <h3>Declarations</h3>
 
@@ -38,21 +40,18 @@
 </table>
 
 @code {
-    [Inject]
-    public DeclarationServices service { get; set; }
-    
     private List<Declaration> declarationList;
     private Declaration selectedDeclaration;
 
     protected override async Task OnInitializedAsync()
     {
-        declarationList = await service.GetDeclarationAsync();
+        await RefreshDeclarations();
         await base.OnInitializedAsync();
     }
 
     private async Task RefreshDeclarations()
     {
-        declarationList = await service.GetDeclarationAsync();
+        declarationList = await dbContext.Declaration.ToListAsync();
     }
 
     Declaration UpdateDeclaration = new Declaration();
@@ -60,24 +59,24 @@
     private void SetDeclarationForUpdate(Declaration declaration)
     {
         UpdateDeclaration = declaration;
-        
+
     }
-    
+
     private async Task UpdateDeclarationData()
     {
-        await service.UpdateDeclarationAsync(UpdateDeclaration);
+        dbContext.Declaration.Update(UpdateDeclaration);
         await RefreshDeclarations();
     }
 
     private async Task DeleteDeclaration(Declaration declaration)
     {
-        await service.DeleteDeclarationAsync(declaration);
+        dbContext.Declaration.Remove(declaration);
         await RefreshDeclarations();
     } 
     
     private void ViewDeclaration(Declaration declaration)
     {
-        string declarationId = declaration.Id.ToString();
+        string declarationId = declaration.DeclarationId.ToString();
         NavigationManager.NavigateTo($"/declarations/{declarationId}");
     }
 }

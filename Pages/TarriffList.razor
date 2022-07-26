@@ -15,15 +15,16 @@
 </div>
 <SfButton OnClick="exportPDF">Export PDF</SfButton>
 <br/><br/>
-<SfGrid DataSource="@tariffs" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel", "Search" })" AllowPaging="true" AllowSorting="true" AllowFiltering="true" @ref="Grid" AllowPdfExport="true">
-    <GridEditSettings AllowAdding="true" AllowDeleting="@editable" AllowEditing="@editable" ShowConfirmDialog="false"></GridEditSettings>
+<SfGrid DataSource="@tariffs" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel", "Search" })" 
+        AllowPaging="true" AllowSorting="true" @ref="Grid" AllowPdfExport="true" RowHeight="40">
+    <GridEditSettings AllowAdding="true" AllowDeleting="@editable" AllowEditing="@editable"></GridEditSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Tariff" ></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(Tariff.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <!-- GridForeignColumn is preventing the datagrid from loading records -->
-        <GridForeignColumn TValue="UOM" Field="@nameof(Tariff.UOM)" HeaderText="UOM" ForeignKeyValue="Code" ForeignDataSource="uomList">
+        <GridForeignColumn Field="@nameof(Tariff.UomId)" HeaderText="UOM" ForeignKeyValue="Code" ForeignDataSource="@uomList">
             <EditTemplate>
-                <SfComboBox TItem="UOM" TValue="UOM" PopupHeight="230px" @bind-Value="@((context as Tariff).UOM)"  DataSource="uomList">
+                <SfComboBox TItem="Uom" TValue="Uom" PopupHeight="230px" @bind-Value="@((context as Tariff).Uom)"  DataSource="uomList">
                     <ComboBoxFieldSettings Value="Code"></ComboBoxFieldSettings>
                 </SfComboBox>
             </EditTemplate>
@@ -34,21 +35,24 @@
     </GridColumns>
 </SfGrid>
 
+
+
 @code {
+
     private bool editable = false;
     public List<Tariff> tariffs { get; set; }
     SfGrid<Tariff> Grid;
-    private List<UOM> uomList { get; set; }
+    private List<Uom> uomList { get; set; }
 
     protected override void OnInitialized()
     {
-        uomList = dbContext.UOM.ToList();
+        uomList = dbContext.Uom.ToList();
         RefreshTariffList();
     }
 
     private async Task RefreshTariffList()
     {
-        tariffs = dbContext.Tariff.Include(t => t.UOM).ToList();
+        tariffs = dbContext.Tariff.ToList();
     }
 
     private void ActionBeginHandler(ActionEventArgs<Tariff> Args)
@@ -58,7 +62,7 @@
             Console.WriteLine(Args.Action);
             if (Args.Action == "Add")
             {
-                Args.Data.Id = Guid.NewGuid();
+                Args.Data.TariffId = Guid.NewGuid();
                 dbContext.Tariff.Add(Args.Data);
                 dbContext.SaveChanges();
                 RefreshTariffList();
@@ -67,7 +71,7 @@
             {
                 try
                 {
-                    var tariffExists = dbContext.Tariff.Find(Args.Data.Id);
+                    var tariffExists = dbContext.Tariff.Find(Args.Data.TariffId);
                     if (tariffExists != null)
                     {
                         dbContext.Entry(tariffExists).State = EntityState.Detached; //detach before update

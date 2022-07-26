@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Zip2Clear.Data
 { 
@@ -19,7 +19,7 @@ namespace Zip2Clear.Data
         public DbSet<Item> Item { get; set; }
         public DbSet<Tariff> Tariff { get; set; }
         public DbSet<Department> Department { get; set; }
-        public DbSet<UOM> UOM { get; set; }
+        public DbSet<Uom> Uom { get; set; }
         #endregion
 
         #region Overidden methods
@@ -49,8 +49,8 @@ namespace Zip2Clear.Data
         {
             return new List<Declaration>
             {
-                new Declaration { Id = Guid.NewGuid(), Regime = "4", Type = "400", ModeOfTransport = "1", DeclarationOffice = "SAQPDK", DeclarationNumber = "2022DEC0000845484", CountryOfOrigin = "US", CountryOfDestination = "BS", PortOfEntry = "SAQ", PortOfExit = "USPVS", Exporter = "Mennonite Messianic Mission", Importer = "Mennonite Messianic Mission", CreatedDate = DateTime.Now, SubmittedDate = DateTime.Now, TotalPackageQnty = 1, TotalPackageQntyUOM = "EA", TotalGrossMassMeasureQnty = 390, TotalGrossMassMeasureUOM = "LB", Submitted = true, Status = "Compliance", ManifestNumber = "MSTRNO30613", BOLnumber = "PEVMOB005095" },
-                new Declaration { Id = Guid.NewGuid(), Regime = "4", Type = "400", ModeOfTransport = "1", DeclarationOffice = "SAQPDK", DeclarationNumber = "2022DEC0000845474", CountryOfOrigin = "US", CountryOfDestination = "BS", PortOfEntry = "SAQ", PortOfExit = "USPVS", Exporter = "Mennonite Messianic Mission", Importer = "Mennonite Messianic Mission", CreatedDate = DateTime.Now, SubmittedDate = DateTime.Now, TotalPackageQnty = 1, TotalPackageQntyUOM = "EA", TotalGrossMassMeasureQnty = 40, TotalGrossMassMeasureUOM = "LB", Submitted = true, Status = "Compliance", ManifestNumber = "MSTRNO30613", BOLnumber = "PEVMOB005096" }
+                new Declaration { DeclarationId = Guid.NewGuid(), Regime = "4", Type = "400", ModeOfTransport = "1", DeclarationOffice = "SAQPDK", DeclarationNumber = "2022DEC0000845484", CountryOfOrigin = "US", CountryOfDestination = "BS", PortOfEntry = "SAQ", PortOfExit = "USPVS", Exporter = "Mennonite Messianic Mission", Importer = "Mennonite Messianic Mission", CreatedDate = DateTime.Now, SubmittedDate = DateTime.Now, TotalPackageQnty = 1, TotalPackageQntyUOM = "EA", TotalGrossMassMeasureQnty = 390, TotalGrossMassMeasureUOM = "LB", Submitted = true, Status = "Compliance", ManifestNumber = "MSTRNO30613", BOLnumber = "PEVMOB005095" },
+                new Declaration { DeclarationId = Guid.NewGuid(), Regime = "4", Type = "400", ModeOfTransport = "1", DeclarationOffice = "SAQPDK", DeclarationNumber = "2022DEC0000845474", CountryOfOrigin = "US", CountryOfDestination = "BS", PortOfEntry = "SAQ", PortOfExit = "USPVS", Exporter = "Mennonite Messianic Mission", Importer = "Mennonite Messianic Mission", CreatedDate = DateTime.Now, SubmittedDate = DateTime.Now, TotalPackageQnty = 1, TotalPackageQntyUOM = "EA", TotalGrossMassMeasureQnty = 40, TotalGrossMassMeasureUOM = "LB", Submitted = true, Status = "Compliance", ManifestNumber = "MSTRNO30613", BOLnumber = "PEVMOB005096" }
             };
         }
 
@@ -58,8 +58,8 @@ namespace Zip2Clear.Data
         {
             return new List<Department>
             {
-                new Department { Id = Guid.NewGuid(), Code = "MM", Email = "mmf.lr@emypeople.net" },
-                new Department { Id = Guid.NewGuid(), Code = "MS", Email = "mms.lr@emypeople.net" }
+                new Department { DepartmentId = Guid.NewGuid(), Code = "MM", Email = "mmf.lr@emypeople.net" },
+                new Department { DepartmentId = Guid.NewGuid(), Code = "MS", Email = "mms.lr@emypeople.net" }
             };
         }
         #endregion
