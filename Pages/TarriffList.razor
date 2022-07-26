@@ -24,7 +24,7 @@
         <!-- GridForeignColumn is preventing the datagrid from loading records -->
         <GridForeignColumn Field="@nameof(Tariff.UomId)" HeaderText="UOM" ForeignKeyValue="Code" ForeignDataSource="@uomList">
             <EditTemplate>
-                <SfComboBox TItem="Uom" TValue="Uom" PopupHeight="230px" @bind-Value="@((context as Tariff).Uom)"  DataSource="uomList">
+                <SfComboBox TItem="Uom" TValue="Uom" PopupHeight="230px" @bind-Value="@((context as Tariff).Uom)"  DataSource="uomList" Autofill="true">
                     <ComboBoxFieldSettings Value="Code"></ComboBoxFieldSettings>
                 </SfComboBox>
             </EditTemplate>
