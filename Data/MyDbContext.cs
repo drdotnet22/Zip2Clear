@@ -37,11 +37,11 @@ namespace Zip2Clear.Data
         {
             return new List<Vendor>
             {
-                new Vendor { Id = Guid.NewGuid(), Name = "WALPOLE FEED", AddressLine = "PO BOX 1723", CityName = "OKEECHOBEE", State = "FL", PostalCode = "34973", CountryCode = "US" },
-                new Vendor { Id = Guid.NewGuid(), Name = "AGRIVET", AddressLine = "12029 W DOPHIN CT", CityName = "HOMOSASSA", State = "FL", PostalCode = "34448", CountryCode = "US" },
-                new Vendor { Id = Guid.NewGuid(), Name = "ROADWAY TIRES", AddressLine = "1301 SW 2ND ST", CityName = "POMPANO BEACH", State = "FL", PostalCode = "33069", CountryCode = "US" },
-                new Vendor { Id = Guid.NewGuid(), Name = "TPH", AddressLine = "2968 RAVENSWOOD ROAD", CityName = "FORT LAUDERDALE", State = "FL", PostalCode = "33312", CountryCode = "US" },
-                new Vendor { Id = Guid.NewGuid(), Name = "MONTE PACKAGE", AddressLine = "4300 STEWART ROAD", CityName = "LAKELAND", State = "FL", PostalCode = "33815", CountryCode = "US" }
+                new Vendor { VendorId = Guid.NewGuid(), Name = "WALPOLE FEED", AddressLine = "PO BOX 1723", CityName = "OKEECHOBEE", State = "FL", PostalCode = "34973", CountryCode = "US" },
+                new Vendor { VendorId = Guid.NewGuid(), Name = "AGRIVET", AddressLine = "12029 W DOPHIN CT", CityName = "HOMOSASSA", State = "FL", PostalCode = "34448", CountryCode = "US" },
+                new Vendor { VendorId = Guid.NewGuid(), Name = "ROADWAY TIRES", AddressLine = "1301 SW 2ND ST", CityName = "POMPANO BEACH", State = "FL", PostalCode = "33069", CountryCode = "US" },
+                new Vendor { VendorId = Guid.NewGuid(), Name = "TPH", AddressLine = "2968 RAVENSWOOD ROAD", CityName = "FORT LAUDERDALE", State = "FL", PostalCode = "33312", CountryCode = "US" },
+                new Vendor { VendorId = Guid.NewGuid(), Name = "MONTE PACKAGE", AddressLine = "4300 STEWART ROAD", CityName = "LAKELAND", State = "FL", PostalCode = "33815", CountryCode = "US" }
             };
         }
 

@@ -41,7 +41,7 @@
         {
             if (Args.Action == "Add")
             {
-                Args.Data.Id = Guid.NewGuid();
+                Args.Data.VendorId = Guid.NewGuid();
                 dbContext.Vendor.Add(Args.Data);
                 dbContext.SaveChanges();
                 GetVendors();
@@ -50,7 +50,7 @@
             {
                 try
                 {
-                    var vendorExists = dbContext.Vendor.Find(Args.Data.Id);
+                    var vendorExists = dbContext.Vendor.Find(Args.Data.VendorId);
                     if (vendorExists != null)
                     {
                         dbContext.Entry(vendorExists).State = EntityState.Detached;

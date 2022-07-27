@@ -65,7 +65,7 @@ namespace Zip2Clear.Data
     #region Vendor class
     public class Vendor
     {
-        public Guid Id { get; set; }
+        public Guid VendorId { get; set; }
         public string Name { get; set; }
         public string AddressLine { get; set; }
         public string? CityName { get; set; }

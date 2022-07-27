@@ -54,7 +54,7 @@ namespace Zip2Clear.Data
         {
             try
             {
-                var vendorExist = dbContext.Vendor.FirstOrDefault(p => p.Id == vendor.Id);
+                var vendorExist = dbContext.Vendor.FirstOrDefault(p => p.VendorId == vendor.VendorId);
                 if (vendorExist != null)
                 {
                     dbContext.Update(vendor);

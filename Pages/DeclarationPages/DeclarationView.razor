@@ -5,6 +5,7 @@
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
 @using Radzen
+@using Syncfusion.Blazor.Grids
 
 @inject DeclarationServices declarationService
 @inject InvoiceServices invoiceService
@@ -19,7 +20,7 @@
 <RadzenTabs>
     <Tabs>
         <RadzenTabsItem Text="Header">
-            
+            <p>@declaration.DeclarationNumber</p>
         </RadzenTabsItem>
         <RadzenTabsItem Text="B/L">
             <p>@declaration.ManifestNumber</p>
@@ -72,10 +73,10 @@
     protected override async Task OnInitializedAsync()
     {
         declarationList = await declarationService.GetDeclarationAsync();
-        await base.OnInitializedAsync();
         await LoadDeclarationAsync();
         await RefreshInvoices();
         await RefreshItems();
+        await base.OnInitializedAsync();
     }
 
     private async Task LoadDeclarationAsync()

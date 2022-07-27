@@ -82,7 +82,7 @@
     public Vendor NewVendor { get; set; } = new Vendor() { CountryCode = "US" };
     private async Task AddNewVendor()
     {
-        NewVendor.Id = Guid.NewGuid();
+        NewVendor.VendorId = Guid.NewGuid();
         await vendorService.AddVendorAsync(NewVendor);
         NewVendor = new Vendor();
         await RefreshVendors();
