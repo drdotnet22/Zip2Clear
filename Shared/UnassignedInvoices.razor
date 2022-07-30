@@ -4,39 +4,18 @@
 @using Zip2Clear.Data
 @using Syncfusion.Blazor.Grids
 
-@inject Radzen.DialogService DialogService
 @inject Zip2Clear.Data.MyDbContext context
 @inject DeclarationServices declarationService
 
-<h6>Declaration Number: @declaration?.DeclarationNumber</h6>
-@*
-<RadzenDataGrid @ref="grid" AllowRowSelectOnRowClick="true" AllowFiltering="true" FilterCaseSensitivity="Radzen.FilterCaseSensitivity.CaseInsensitive" AllowSorting="true" 
-    Data="@unassignedInvoices" TItem="Invoice" 
-    SelectionMode="Radzen.DataGridSelectionMode.Multiple" @bind-Value="@selectedInvoices">
-    <Columns>
-        <RadzenDataGridColumn TItem="Invoice" Filterable="false" Sortable="false">
-            <HeaderTemplate>
-                <RadzenCheckBox TriState="false" TValue="bool" Value="@(unassignedInvoices.Any(i => selectedInvoices != null && selectedInvoices.Contains(i)))"
-                    Change=@(args => selectedInvoices = args ? unassignedInvoices.ToList() : null) />
-            </HeaderTemplate>
-            <Template Context="invoice">
-                <RadzenCheckBox TriState="false" Value="@(selectedInvoices != null && selectedInvoices.Contains(invoice))"
-                TValue="bool" Change=@(args => { grid.SelectRow(invoice); }) />
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Invoice" Property="Number" Title="Invoice Number" Sortable="true" Filterable="true" />
-        <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Title="Vendor" Sortable="true" Filterable="true" />
-        <RadzenDataGridColumn TItem="Invoice" Property="Date" Title="Date" Sortable="true" Filterable="true" />
-    </Columns>
-</RadzenDataGrid>*@
 
 <div class="col-lg-12 control-section">
     <div class="content-wrapper">
         <div class="row">
-            <SfGrid DataSource="@unassignedInvoices" AllowSelection="true" @ref="sfGrid">
-                <GridSelectionSettings PersistSelection="true" Mode="SelectionMode.Row" EnableToggle="true" 
-                            AllowDragSelection="true" EnableSimpleMultiRowSelection="true"></GridSelectionSettings>
+            <SfGrid DataSource="@unassignedInvoices" AllowSelection="true" @ref="sfGrid" >
+                <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" Mode="SelectionMode.Row" EnableToggle="true"
+                                       EnableSimpleMultiRowSelection="true" ></GridSelectionSettings>
                 <GridColumns>
+                    <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
                     <GridColumn Field="@nameof(Invoice.Number)" HeaderText="Invoice Number"></GridColumn>
                     <GridForeignColumn Field="@nameof(Invoice.VendorId)" HeaderText="Vendor" ForeignDataSource="@vendorList" ForeignKeyValue="Name"></GridForeignColumn>
                     <GridColumn Field="@nameof(Invoice.Date)" HeaderText="Date"></GridColumn>
@@ -50,20 +29,18 @@
 
 
 @code {
-    [Parameter] public string? declarationId { get; set; }
+    [CascadingParameter]
+    protected Declaration declaration { get; set; }
+
+    [Parameter] 
+    public EventCallback<string> OnClick { get; set; }
 
     SfGrid<Invoice> sfGrid;
-    public Declaration declaration;
     IEnumerable<Invoice> unassignedInvoices;
     IEnumerable<Vendor> vendorList;
-    IList<Invoice> selectedInvoices;
-    RadzenDataGrid<Invoice> grid;
 
     protected override async Task OnInitializedAsync()
     {
-        declaration = context.Declaration
-                        .FirstOrDefault(d => d.DeclarationNumber == declarationId);
-
         vendorList = context.Vendor.ToList();
         unassignedInvoices = context.Invoice
                                 .Where(i => i.Declaration == null)
@@ -73,12 +50,12 @@
 
     public async Task UpdateInvoices()
     {
-        foreach (var invoice in selectedInvoices)
+        foreach (var invoice in sfGrid.SelectedRecords)
         {
             invoice.Declaration = declaration;
             context.Update(invoice);
         }
-        await context.SaveChangesAsync();
-        DialogService.Close(true);
+        context.SaveChangesAsync();
+        await OnClick.InvokeAsync("CloseDialog");
     }
 }

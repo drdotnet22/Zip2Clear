@@ -4,62 +4,84 @@
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
-@using Radzen
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
 
 @inject DeclarationServices declarationService
 @inject InvoiceServices invoiceService
 @inject ItemServices itemService
 @inject MyDbContext dbContext
-@inject DialogService DialogService
-
-@implements IDisposable
 
 <h3>DeclarationView</h3>
 
-<RadzenTabs>
-    <Tabs>
-        <RadzenTabsItem Text="Header">
-            <p>@declaration.DeclarationNumber</p>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="B/L">
-            <p>@declaration.ManifestNumber</p>
-            <p>@declaration.BOLnumber</p>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="Invoices">
-            <RadzenButton Text="Open Invoice List" ButtonStyle="ButtonStyle.Secondary" Click=@OpenInvoiceList />
-            <br/>
-            <br/>
-            <RadzenDataGrid AllowFiltering=true AllowColumnResize=true FilterMode="FilterMode.Advanced" 
-                    AllowSorting=true PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary=true
-                    TItem="Invoice" Data="@invoices" @ref="invoiceGrid"
-                    EditMode="Radzen.DataGridEditMode.Single">
-                <Columns>
-                    <RadzenDataGridColumn TItem="Invoice" Property="Number" Title="Invoice Number" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="Date" Title="Date" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="Vendor.Name" Title="Vendor" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="Shipping" Title="Shipping" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Property="Insurance" Title="B/L freight" Filterable=true Sortable=true />
-                    <RadzenDataGridColumn TItem="Invoice" Context="invoice" Filterable=false Sortable=false Width="70px">
-                        <Template Context="invoice">
-                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Click="@(args => DeleteInvoiceRow(invoice))" />
-                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="close" Size="ButtonSize.Small" Click="@(args => UnassignInvoice(invoice))" />
-                        </Template>
-                    </RadzenDataGridColumn>
-                </Columns>
-            </RadzenDataGrid>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="Items" >
-            <CascadingValue Value="declaration" >
-                <ItemList />
+<SfTab>
+    <TabItems>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Header"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <p>@declaration.DeclarationNumber</p>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="B/L"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <p>@declaration.ManifestNumber</p>
+                <p>@declaration.BOLnumber</p>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Invoices"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <SfButton OnClick="@OpenUnassignedInvoiceList" IsPrimary="true">Open Invoice List</SfButton>
+                <br/>
+                <br/>
+                <SfGrid DataSource="@invoices" AllowPaging="true">
+                    <GridColumns>
+                        <GridColumn Field="@nameof(Invoice.Number)" HeaderText="Invoice Number" ></GridColumn>
+                        <GridForeignColumn Field="@nameof(Invoice.VendorId)" ForeignKeyValue="Name" ForeignDataSource="@vendors"></GridForeignColumn>
+                        <GridColumn Field="@nameof(Invoice.Date)" HeaderText="Date"></GridColumn>
+                        <GridColumn Field="@nameof(Invoice.Shipping)" HeaderText="Shipping"></GridColumn>
+                        <GridColumn Field="@nameof(Invoice.Insurance)" HeaderText="B/L freight"></GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Items"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <CascadingValue Value="declaration" >
+                    <ItemList />
+                </CascadingValue>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>
+
+<SfDialog ShowCloseIcon="true" @bind-Visible="dialogVisible" AllowPrerender="false" Width="700px">
+    <DialogTemplates>
+        <Header>Unnasigned Invoices</Header>
+        <Content>
+            <CascadingValue Value="declaration">
+                <UnassignedInvoices OnClick="CloseUnassignedInvoiceDialog" />
             </CascadingValue>
-        </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
 
 @code {
     [Parameter]
     public string? declarationId { get; set; }
+
 
     //Declaration
     private List<Declaration> declarationList;
@@ -70,12 +92,15 @@
     public List<Invoice> invoices;
     RadzenDataGrid<Invoice> invoiceGrid;
 
+    //Vendor
+    private IEnumerable<Vendor> vendors;
+
     protected override async Task OnInitializedAsync()
     {
         declarationList = await declarationService.GetDeclarationAsync();
+        vendors = await dbContext.Vendor.ToListAsync();
         await LoadDeclarationAsync();
         await RefreshInvoices();
-        await RefreshItems();
         await base.OnInitializedAsync();
     }
 
@@ -91,111 +116,21 @@
     }
 
     #region Dialog
-    public void Dispose()
+    private bool dialogVisible = false;
+    public void OpenUnassignedInvoiceList()
     {
+        this.dialogVisible = true;
     }
 
-    public async Task OpenInvoiceList()
+    public void CloseUnassignedInvoiceDialog(string action)
     {
-        await DialogService.OpenAsync<Shared.UnassignedInvoices>("Unassigned Invoices",
-               new Dictionary<string, object>() { { "declarationId", declaration.DeclarationNumber } },
-               new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
-
-        RefreshInvoices();
+        if (action == "CloseDialog")
+        {
+            this.dialogVisible = false;
+            RefreshInvoices();
+        }
     }
     #endregion
-
-    #region Item Grid
-    RadzenDataGrid<Item> itemsGrid;
-    IList<Item> items;
-
-    private async Task RefreshItems()
-    {
-        items = dbContext.Item.Where(i => i.Invoice.Declaration.DeclarationNumber == declaration.DeclarationNumber).ToList();
-    }
-
-    async Task EditItemRow(Item item)
-    {
-        await itemsGrid.EditRow(item);
-    }
-
-    void OnUpdateItemRow(Item item)
-    {
-        if (item == itemToInsert)
-        {
-            itemToInsert = null;
-        }
-
-        dbContext.Update(item);
-
-        dbContext.SaveChanges();
-    }
-
-    async Task SaveItemRow(Item order)
-    {
-        if (order == itemToInsert)
-        {
-            itemToInsert = null;
-        }
-
-        await itemsGrid.UpdateRow(order);
-    }
-
-    void CancelItemEdit(Item order)
-    {
-        if (order == itemToInsert)
-        {
-            itemToInsert = null;
-        }
-
-        itemsGrid.CancelEditRow(order);
-
-        // For production
-        var orderEntry = dbContext.Entry(order);
-        if (orderEntry.State == EntityState.Modified)
-        {
-            orderEntry.CurrentValues.SetValues(orderEntry.OriginalValues);
-            orderEntry.State = EntityState.Unchanged;
-        }
-    }
-
-    async Task DeleteItemRow(Item item)
-    {
-        if (item == itemToInsert)
-        {
-            itemToInsert = null;
-        }
-
-        if (items.Contains(item))
-        {
-            dbContext.Remove<Item>(item);
-
-            dbContext.SaveChanges();
-
-            await itemsGrid.Reload();
-        }
-        else
-        {
-            itemsGrid.CancelEditRow(item);
-        }
-    }
-
-    Item itemToInsert;
-
-    async Task InsertItemRow()
-    {
-        itemToInsert = new Item();
-        await itemsGrid.InsertRow(itemToInsert);
-    }
-
-    void OnCreateItemRow(Item item)
-    {
-        dbContext.Add(item);
-
-        dbContext.SaveChanges();
-    }
-    #endregion
-
     #region Invoice Grid
     async Task DeleteInvoiceRow(Invoice invoice)
     {
