@@ -3,6 +3,7 @@
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
 @using Radzen
+@using Syncfusion.Blazor.Cards
 
 @inject InvoiceServices invoiceService
 @inject VendorServices vendorService
@@ -11,7 +12,7 @@
 
 <h3>New Invoice</h3>
 
-<RadzenCard Style="width:500px">
+<SfCard Style="width:500px">
     <div class="input-group">
         <div class="input-group-prepend">
             <span class="input-group-text">Invoice Number:</span>
@@ -49,9 +50,9 @@
         </div>
         <input class="form-control" @bind="NewInvoice.Insurance" />
     </div>
-</RadzenCard>
+</SfCard>
 
-<RadzenCard Visible="invoiceSaved">
+<SfCard ID="">
     <Fields>
         <Field>
             <FieldLabel>Department</FieldLabel>
@@ -77,7 +78,7 @@
             <NumericEdit TValue="double" />
         </Field>
     </Fields>
-</RadzenCard>
+</SfCard>
 
 <RadzenCard Visible="invoiceSaved">
     <RadzenButton Icon="add_circle_outline" style="width:fit-content" ButtonStyle="Radzen.ButtonStyle.Primary" Text="New Item" Click="@InsertItemRow" Disabled=@(itemToInsert != null) />

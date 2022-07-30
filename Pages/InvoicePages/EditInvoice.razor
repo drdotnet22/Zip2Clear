@@ -1,8 +1,14 @@
-﻿@page "/invoices/{InvoiceId}/edit"
+﻿@page "/invoices/{InvoiceId}"
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
 @using Radzen
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Grids
 
 @inject Radzen.DialogService DialogService
 @inject NavigationManager NavigationManager
@@ -13,95 +19,55 @@
 {
     <h3>@invoice.Vendor?.Name #@invoice.Number</h3>
 }
+@if (!editable)
+{
+    <SfButton OnClick="Edit">Edit</SfButton>
+}
 
-<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
-    <Fields>
-        <Field>
-            <FieldLabel>Invoice Number</FieldLabel>
-            <TextEdit @ref="@firstEle" @bind-Text="invoice.Number" />
-        </Field>
-        <Field>
-            <FieldLabel>Vendor</FieldLabel>
-            <Autocomplete TItem="Vendor" TValue="string" Data="@vendors" ValueField="@(( vendor ) => vendor.Name)" TextField="@(( vendor ) => vendor.Name)"
-                            @bind-SelectedValue=@selectedVendor>
-                <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
-            </Autocomplete>
-        </Field>
-        <Field>
-            <FieldLabel>Date</FieldLabel>
-            <DatePicker TValue="DateTime" Date="invDate" DateChanged="@(args => OnDateChange(args))" />
-        </Field>
-    </Fields>
-</Div>
-<Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom" >
-    <Fields>
-        <Field>
-            <FieldLabel>Shipping</FieldLabel>
-            <NumericEdit TValue="decimal" @bind-Value="invoice.Shipping" />
-        </Field>
-        <Field>
-            <FieldLabel>Insurance/BOL freight</FieldLabel>
-            <NumericEdit TValue="decimal" @bind-Value="invoice.Insurance" />
-        </Field>
-    </Fields>
-</Div>
-<RadzenButton Visible="newInv" Click="@SaveNewInvoice">Save</RadzenButton>
+<div style="width:fit-content">
+    <div class="row">
+        <div style="width:auto">
+            <SfTextBox Placeholder="Invoice Number" FloatLabelType="FloatLabelType.Auto" @bind-Value="invoice.Number" @ref=firstEle Enabled="editable" ></SfTextBox>
+        </div>
+        <div style="width:auto">
+            <SfAutoComplete TValue="Vendor" TItem="Vendor" Placeholder="Vendor" FloatLabelType="FloatLabelType.Auto"
+                    DataSource="vendors" @bind-Value="invoice.Vendor" Autofill="true" Enabled="editable" >
+                <AutoCompleteFieldSettings Value="Name"/>
+            </SfAutoComplete>
+        </div>
+        <div style="width:auto">
+            <SfDatePicker TValue="DateTime" Placeholder="Date" FloatLabelType="FloatLabelType.Auto" ShowClearButton="false" @bind-Value="invoice.Date" Enabled="editable"></SfDatePicker>
+        </div>
+    </div>
+    <div class="row">
+        <div style="width:auto">
+            <SfNumericTextBox TValue="decimal" @bind-Value="invoice.Shipping" Placeholder="Shipping"
+                              FloatLabelType="FloatLabelType.Auto" ShowSpinButton="false" Enabled="editable"></SfNumericTextBox>
+        </div>
+        <div style="width:auto">
+            <SfNumericTextBox TValue="decimal" @bind-Value="invoice.Insurance" Placeholder="Insurance/BOL freight"
+                              FloatLabelType="FloatLabelType.Auto" ShowSpinButton="false" Enabled="editable"></SfNumericTextBox>
+        </div>
+    </div>
+</div>
+
+@if (newInv)
+{
+    <SfButton OnClick="@SaveNewInvoice">Save</SfButton>
+}
          
 @if (!newInv)
 {
-    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="@AddItemDialog" >Add Item</RadzenButton>
-    <RadzenDataGrid TItem="Item" Data="@items" RowCreate="@OnCreateItemRow" RowUpdate="OnUpdateItemRow" @ref="itemsGrid" 
-        AllowFiltering="true" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single" >
-        <Columns>
-            <RadzenDataGridColumn TItem="Item" Property="Quantity" Title="Quantity" >
-                <EditTemplate Context="item">
-                    <RadzenNumeric Name="Quantity" @bind-Value="item.Quantity"/>
-                    <RadzenRequiredValidator Text="Quantity is required!" Component="Quantity" Popup="true" />
-                </EditTemplate>
-                <FooterTemplate>
-                    Total Qnty: @items?.Sum(i => i.Quantity)
-                </FooterTemplate>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Item" Property="Tariff.Name" Title="Description" >
-                <EditTemplate Context="item">
-                    <RadzenTextBox Name="Description" @bind-Value="item.Tariff.Name" />
-                    <RadzenRequiredValidator Text="Description is required!" Component="Description" Popup="true" />
-                </EditTemplate>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Item" Property="Value" Title="Value" >
-                <Template Context="item">
-                    @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", item.Value)
-                </Template>
-                <EditTemplate Context="item">
-                    <RadzenNumeric Name="Value" @bind-Value="item.Value" />
-                    <RadzenRequiredValidator Text="Value is required!" Component="Value" Popup="true" />
-                </EditTemplate>
-                <FooterTemplate>
-                    @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", items?.Sum(i => i.Value))
-                </FooterTemplate>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Item" Property="Weight" Title="Weight" >
-                <EditTemplate Context="item">
-                    <RadzenNumeric Name="Value" @bind-Value="item.Weight" />
-                </EditTemplate>
-                <FooterTemplate>
-                    Total Weight: @items?.Sum(i => i.Weight) lb.
-                </FooterTemplate>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Item" Context="item" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px" >
-                <Template Context="item">
-                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" @onclick:stopPropagation="true">
-                    </RadzenButton>
-                </Template>
-                <EditTemplate Context="item">
-                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="@((args) => SaveItemRow(item))">
-                    </RadzenButton>
-                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@((args) => CancelItemEdit(item))">
-                    </RadzenButton>
-                </EditTemplate>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>
+    <SfButton OnClick="@AddItemDialog" Disabled="!editable">Add Item</SfButton>
+    <SfGrid DataSource="@itemList" >
+        <GridColumns>
+            <GridColumn Field="@nameof(Item.Quantity)" HeaderText="Quantity"></GridColumn>
+            <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Description" ForeignDataSource="tariffList" ForeignKeyValue="Name"></GridForeignColumn>
+            <GridColumn Field="@nameof(Item.Value)" HeaderText="Value"></GridColumn>
+            <GridColumn Field="@nameof(Item.Weight)" HeaderText="Weight"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+
     <br/><br/>
     <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom">
         <button class="btn btn-primary" @onclick="(() => UpdateInvoice())">Save</button>
@@ -115,15 +81,14 @@
     public string? InvoiceId { get; set; }
 
     bool newInv = false;
+    bool editable;
     public IEnumerable<Vendor> vendors;
-    public string selectedVendor { get; set; }
-    public IEnumerable<Tariff> tarifList;
+    public IEnumerable<Tariff> tariffList;
+    public IEnumerable<Item> itemList;
     public string selectedTariff { get; set; }
     RadzenDataGrid<Item> itemsGrid;
-    IList<Item> items;
     Item itemToInsert;
 
-    DateTime invDate = new DateTime();
     private List<Invoice> Invoices;
 
     public Invoice invoice { get; set; } = new Invoice();
@@ -131,42 +96,45 @@
     protected override async Task OnInitializedAsync()
     {
         vendors = await dbContext.Vendor.ToListAsync();
-        tarifList = await dbContext.Tariff.ToListAsync();
+        tariffList = await dbContext.Tariff.ToListAsync();
         if (InvoiceId == "new")
         {
+            editable = true;
             newInv = true;
-            invDate = DateTime.Now;
             invoice.InvoiceId = Guid.NewGuid();
+            invoice.Date = DateTime.Now;
         }
         else
         {
+            editable = false;
             await LoadInvoiceAsync();
             RefreshItems();
-            selectedVendor = invoice.Vendor?.Name;
-            invDate = invoice.Date;
         }
 
         await base.OnInitializedAsync();
     }
 
-    private Blazorise.TextEdit firstEle;
+    private SfTextBox? firstEle;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            firstEle.Focus();
+            firstEle.FocusAsync();
         }
+    }
+
+    private void Edit()
+    {
+        editable = true;
     }
 
     private async Task RefreshItems()
     {
-        items = dbContext.Item.Where(i => i.InvoiceId == invoice.InvoiceId).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
+        itemList = dbContext.Item.Where(i => i.InvoiceId == invoice.InvoiceId).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
     }
 
     private async Task SaveNewInvoice()
     {
-        invoice.Vendor = vendors.FirstOrDefault(v => v.Name == selectedVendor);
-        invoice.Date = invDate;
         await invoiceService.AddInvoiceAsync(invoice);
         newInv = false;
     }
@@ -179,18 +147,15 @@
 
     private async Task UpdateInvoice()
     {
-        invoice.Vendor = vendors.FirstOrDefault(v => v.Name == selectedVendor);
-        invoice.Date = invDate;
         if (newInv == true)
         {
-            invoice.Shipping = 0;
-            invoice.Insurance = 0;
             await invoiceService.AddInvoiceAsync(invoice);
         }
         else
         {
             await invoiceService.UpdateInvoiceAsync(invoice);
         }
+        NavigationManager.NavigateTo("/invoices");
     }
 
     private async Task DeleteInvoice()
@@ -202,11 +167,6 @@
     private async Task Cancel()
     {
         NavigationManager.NavigateTo("/invoices");
-    }
-
-    void OnDateChange(DateTime date)
-    {
-        invDate = date;
     }
 
     #region DataGrid row edit

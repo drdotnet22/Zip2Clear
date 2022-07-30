@@ -30,7 +30,6 @@
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.Date</td>
                             <td @onclick="(() => ViewInvoice(invoice))">@invoice.Vendor?.Name</td>
                             <td width="180px">
-                                <button class="btn btn-secondary btn-sm" @onclick="(() => EditInvoice(invoice))">Edit</button>
                                 <button class="btn btn-danger btn-sm" @onclick="(() => DeleteInvoice(invoice))">Delete</button>
                             </td>
                         </tr>
@@ -68,15 +67,9 @@
         }
     }
 
-    private async Task EditInvoice(Invoice invoice)
-    {
-        string invoiceId = invoice.InvoiceId.ToString();
-        NavigationManager.NavigateTo($"/invoices/{invoiceId}/edit");
-    }
-
     private async Task NewInvoice()
     {
-        NavigationManager.NavigateTo($"/invoices/new/edit");
+        NavigationManager.NavigateTo($"/invoices/new");
     }
 
     private async Task DeleteInvoice(Invoice invoice)
@@ -89,6 +82,6 @@
     private void ViewInvoice(Invoice invoice)
     {
         string invoiceId = invoice.InvoiceId.ToString();
-        NavigationManager.NavigateTo($"/invoices/{invoiceId}/view");
+        NavigationManager.NavigateTo($"/invoices/{invoiceId}");
     }
 }

@@ -13,7 +13,7 @@
         </Field>
         <Field>
             <FieldLabel>Description</FieldLabel>
-            <Autocomplete TItem="Tariff" TValue="Tariff" Data="@tariffs" ValueField="@(( tariffs ) => tariffs)" 
+            <Autocomplete TItem="Tariff" TValue="Tariff" Data="@tariffList" ValueField="@(( tariffs ) => tariffs)" 
                 TextField="@(( tariffs ) => tariffs.Name)" @bind-SelectedValue="@item.Tariff" />
         </Field>
         <Field>
@@ -29,7 +29,7 @@
             <NumericEdit TValue="double?" @bind-Value="item.Weight" @onblur="OnTariffSet" />
         </Field>
         <Field>
-            <FieldLabel>UOM: Code is @item.Tariff?.UomId</FieldLabel>
+            <FieldLabel>UOM: Code is @item.Tariff?.Uom.Code</FieldLabel>
             <NumericEdit TValue="double?" @bind-Value="item.UomValue" />
         </Field>
         <Field>
@@ -48,16 +48,16 @@
     [Parameter] public string InvoiceId { get; set; }
 
 
-    public Invoice invoice;
-    public Item item { get; set; } 
-    public IEnumerable<Tariff> tariffs;
-    private List<Invoice> invoiceList;
+    private Invoice invoice;
+    private Item item { get; set; }
+    private IEnumerable<Tariff> tariffList;
+    private IEnumerable<Invoice> invoiceList;
 
     protected override async Task OnInitializedAsync()
     {
         invoiceList = await dbContext.Invoice.ToListAsync();
         invoice = invoiceList.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
-        tariffs = await dbContext.Tariff.ToListAsync();
+        tariffList = await dbContext.Tariff.Include(t => t.Uom).ToListAsync();
         AddItem();
     }
 
