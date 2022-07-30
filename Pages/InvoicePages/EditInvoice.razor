@@ -59,14 +59,17 @@
 @if (!newInv)
 {
     <SfButton OnClick="@AddItemDialog" Disabled="!editable">Add Item</SfButton>
-    <SfGrid DataSource="@itemList" >
+    @*<SfGrid DataSource="@itemList" >
         <GridColumns>
             <GridColumn Field="@nameof(Item.Quantity)" HeaderText="Quantity"></GridColumn>
             <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Description" ForeignDataSource="tariffList" ForeignKeyValue="Name"></GridForeignColumn>
             <GridColumn Field="@nameof(Item.Value)" HeaderText="Value"></GridColumn>
             <GridColumn Field="@nameof(Item.Weight)" HeaderText="Weight"></GridColumn>
         </GridColumns>
-    </SfGrid>
+    </SfGrid>*@
+    <CascadingValue Value="invoice">
+        <ItemList/>
+    </CascadingValue>
 
     <br/><br/>
     <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom">
