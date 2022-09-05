@@ -7,6 +7,7 @@ using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using Syncfusion.Blazor;
+using Syncfusion.Blazor.Popups;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -18,6 +19,8 @@ builder.Services.AddServerSideBlazor();
 // Register Syncfusion license
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjgxNjA5QDMyMzAyZTMyMmUzMFZnNlJrdTUyYWFNMGZEK1NWVXdkMXFzMTJYSVJBVVpaL1kvOFIwakRMaTQ9");
 builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+
+builder.Services.AddScoped<SfDialogService>();
 
 // Add Db
 builder.Services.AddDbContext<MyDbContext>(options =>

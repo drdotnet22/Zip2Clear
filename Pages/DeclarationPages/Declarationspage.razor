@@ -2,45 +2,34 @@
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
 
 @inject NavigationManager NavigationManager
 @inject MyDbContext dbContext
+@inject SfDialogService DialogService
 
 <h3>Declarations</h3>
 
-<table class="table">
-		<thead>
-			<tr>
-				<th>Declaration Number</th>
-                <th>Bill of Lading Number</th>
-				<th>DeclarationType</th>
-				<th>Submitted Date</th>
-				<th>Status</th>
-			</tr>
-		</thead>
-		<tbody>
-                @if (declarationList.Any())
-                {
-                    @foreach (var declaration in declarationList)
-                    {
-                        <tr @onclick="(() => ViewDeclaration(declaration))">
-                            <td>@declaration.DeclarationNumber</td>
-                            <td>@declaration.BOLnumber</td>
-                            <td>@declaration.Type</td>
-                            <td>@declaration.SubmittedDate</td>
-                            <td>@declaration.Status</td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr><td colspan="6"><strong>No declarations available</strong></td></tr>
-                }
-        </tbody>
-</table>
+<SfGrid DataSource="declarationList">
+    <GridEvents OnRecordDoubleClick="DoubleClickHandler" CommandClicked="ActionBeginHandler" TValue="Declaration"></GridEvents>
+    <GridColumns>
+        <GridColumn Field="@nameof(Declaration.SubmittedDate)" HeaderText="Submitted Date"></GridColumn>
+        <GridColumn Field="@nameof(Declaration.DeclarationNumber)" HeaderText="Declaration Number"></GridColumn>
+        <GridColumn Field="@nameof(Declaration.BOLnumber)" HeaderText="Bill of Lading Number"></GridColumn>
+        <GridColumn Field="@nameof(Declaration.Type)" HeaderText="Declaration Type"></GridColumn>
+        <GridColumn Field="@nameof(Declaration.Status)" HeaderText="Status"></GridColumn>
+        <GridColumn >
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-delete", CssClass="e-flat" })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
 
 @code {
     private List<Declaration> declarationList;
+    private List<Invoice> invoiceList;
     private Declaration selectedDeclaration;
 
     protected override async Task OnInitializedAsync()
@@ -54,29 +43,33 @@
         declarationList = await dbContext.Declaration.ToListAsync();
     }
 
-    Declaration UpdateDeclaration = new Declaration();
 
-    private void SetDeclarationForUpdate(Declaration declaration)
+    public void DoubleClickHandler(RecordDoubleClickEventArgs<Declaration> args)
     {
-        UpdateDeclaration = declaration;
-
-    }
-
-    private async Task UpdateDeclarationData()
-    {
-        dbContext.Declaration.Update(UpdateDeclaration);
-        await RefreshDeclarations();
-    }
-
-    private async Task DeleteDeclaration(Declaration declaration)
-    {
-        dbContext.Declaration.Remove(declaration);
-        await RefreshDeclarations();
-    } 
-    
-    private void ViewDeclaration(Declaration declaration)
-    {
-        string declarationId = declaration.DeclarationId.ToString();
+        string declarationId = args.RowData.DeclarationId.ToString();
         NavigationManager.NavigateTo($"/declarations/{declarationId}");
+    }
+
+    public async void ActionBeginHandler(CommandClickEventArgs<Declaration> args)
+    {
+        if (args.CommandColumn.Type == CommandButtonType.Delete)
+        {
+            bool isConfirm = await DialogService.ConfirmAsync("Are you sure you want to permanently delete this declaration?", "Delete Declaration");
+            if (isConfirm == true)
+            {
+                invoiceList = dbContext.Invoice
+                                    .Where(i => i.Declaration == args.RowData)
+                                    .ToList();
+                foreach (var inv in invoiceList)
+                {
+                    inv.DeclarationId = null;
+                    dbContext.Update(inv);
+                    dbContext.SaveChanges();
+                }
+                dbContext.Declaration.Remove(args.RowData);
+                dbContext.SaveChanges();
+                RefreshDeclarations();
+            }
+        }
     }
 }
