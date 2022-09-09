@@ -5,6 +5,7 @@
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
 
 @inject MyDbContext dbContext
 
@@ -20,8 +21,11 @@
     <GridEditSettings AllowAdding="true" AllowDeleting="@editable" AllowEditing="@editable"></GridEditSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Tariff" ></GridEvents>
     <GridColumns>
-        <GridColumn Field="@nameof(Tariff.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
-        <!-- GridForeignColumn is preventing the datagrid from loading records -->
+        <GridColumn Field="@nameof(Tariff.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })">
+            <EditTemplate>
+                <SfTextBox  @bind-Value="@((context as Tariff).Name)" CssClass="conversion"></SfTextBox>
+            </EditTemplate>
+        </GridColumn>
         <GridForeignColumn Field="@nameof(Tariff.UomId)" HeaderText="UOM" ForeignKeyValue="Code" ForeignDataSource="@uomList">
             <EditTemplate>
                 <SfComboBox TItem="Uom" TValue="Uom" PopupHeight="230px" @bind-Value="@((context as Tariff).Uom)"  DataSource="uomList" Autofill="true">
@@ -29,7 +33,11 @@
                 </SfComboBox>
             </EditTemplate>
         </GridForeignColumn>
-        <GridColumn Field="@nameof(Tariff.Number)" HeaderText="Tariff Number" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Tariff.Number)" HeaderText="Tariff Number" ValidationRules="@(new ValidationRules{ Required=true })">
+            <EditTemplate>
+                <SfNumericTextBox Format="#" @bind-Value="@(( context as Tariff).Number)" ShowSpinButton="false"></SfNumericTextBox>
+            </EditTemplate>
+        </GridColumn>
         <GridColumn Field="@nameof(Tariff.GeneralRate)" HeaderText="General Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Tariff.ExciseRate)" HeaderText="Excise Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
     </GridColumns>
@@ -63,8 +71,8 @@
             if (Args.Action == "Add")
             {
                 Args.Data.TariffId = Guid.NewGuid();
-                dbContext.Tariff.Add(Args.Data);
-                dbContext.SaveChanges();
+                dbContext.Tariff.AddAsync(Args.Data);
+                dbContext.SaveChangesAsync();
                 RefreshTariffList();
             }
             else if (Args.Action == "Edit")
@@ -147,4 +155,8 @@
         .switch-control .e-disabled {
             pointer-events: none;
         }
+
+    .e-control-wrapper.conversion .e-textbox {
+        text-transform: uppercase;
+    }
 </style>

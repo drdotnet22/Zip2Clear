@@ -3,12 +3,16 @@
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
 
 @inject MyDbContext context
+@inject SfDialogService DialogService
 
-<SfGrid DataSource="@itemList">
+<SfGrid DataSource="@itemList" AllowFiltering="true">
+    <GridEvents CommandClicked="ActionBeginHandler" TValue="Item"></GridEvents>
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
     <GridColumns>
-        @if (declaration != null)
+        @if (invoice == null)
         {
             <GridForeignColumn Field="@nameof(Item.InvoiceId)" HeaderText="Invoice Number" ForeignDataSource="@invoiceList" ForeignKeyValue="Number"></GridForeignColumn>
             <GridColumn Field="Invoice.Vendor.Name" HeaderText="Vendor"></GridColumn>
@@ -22,6 +26,11 @@
         <GridColumn Field="@nameof(Item.UomValue)" HeaderText="Uom Value"></GridColumn>
         <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="General Rate" ForeignDataSource="@tariffList" ForeignKeyValue="GeneralRate"></GridForeignColumn>
         <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Excise Rate" ForeignDataSource="@tariffList" ForeignKeyValue="ExciseRate"></GridForeignColumn>
+        <GridColumn>
+            <GridCommandColumns>
+                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-delete", CssClass="e-flat" })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
     </GridColumns>
 </SfGrid>
 
@@ -40,6 +49,12 @@
     private IEnumerable<Department> departments;
 
     protected override async Task OnInitializedAsync()
+    {
+        await RefreshItemList();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task RefreshItemList()
     {
         if ( declaration != null)
         {
@@ -69,5 +84,19 @@
         vendorList = await context.Vendor.ToListAsync();
         departments = await context.Department.ToListAsync();
         await base.OnInitializedAsync();
+    }
+
+    public async void ActionBeginHandler(CommandClickEventArgs<Item> args)
+    {
+        if (args.CommandColumn.Type == CommandButtonType.Delete)
+        {
+            bool isConfirm = await DialogService.ConfirmAsync($"Are you sure you want to permanently delete the item named {args.RowData.Tariff.Name}?", "Delete Item?");
+            if (isConfirm == true)
+            {
+                context.Remove(args.RowData);
+                context.SaveChanges();
+                RefreshItemList();
+            }
+        }
     }
 }

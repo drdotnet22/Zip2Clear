@@ -34,7 +34,8 @@
         </Field>
         <Field>
             <FieldLabel>Department</FieldLabel>
-            <TextEdit />
+            <Autocomplete TItem="Department" TValue="Department" Data="departmentList" ValueField="@(( departments ) => departments)"
+                TextField="@(( departments ) => departments.Code)" @bind-SelectedValue="@item.Department" />
         </Field>
     </Fields>
 </Div>
@@ -52,12 +53,14 @@
     private Item item { get; set; }
     private IEnumerable<Tariff> tariffList;
     private IEnumerable<Invoice> invoiceList;
+    private IEnumerable<Department> departmentList;
 
     protected override async Task OnInitializedAsync()
     {
         invoiceList = await dbContext.Invoice.ToListAsync();
         invoice = invoiceList.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
         tariffList = await dbContext.Tariff.Include(t => t.Uom).ToListAsync();
+        departmentList = await dbContext.Department.ToListAsync();
         AddItem();
     }
 

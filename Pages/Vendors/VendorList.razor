@@ -2,11 +2,18 @@
 
 @using Zip2Clear.Data
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Buttons
 @using Microsoft.EntityFrameworkCore
 
 @inject MyDbContext dbContext
 
-<SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" @ref="vendorGrid" RowHeight="40"
+<div>
+    <label style="padding: 10px 24px 10px 0">Editable</label>
+    <SfCheckBox @bind-Checked="@editable"></SfCheckBox>
+</div>
+<SfButton OnClick="exportPDF">Export PDF</SfButton>
+<br/><br/>
+<SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" })" AllowPaging="true" AllowPdfExport="true" @ref="vendorGrid" RowHeight="40"
     AllowFiltering="true" AllowSorting="true" >
     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" ShowConfirmDialog="false"></GridEditSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Vendor"></GridEvents>
@@ -21,6 +28,7 @@
 </SfGrid>
 
 @code {
+    private bool editable = false;
     SfGrid<Vendor> vendorGrid;
     public List<Vendor> vendors { get; set; }
 
@@ -79,4 +87,10 @@
         vendorGrid.EndEditAsync();
     }
 
+    private void exportPDF()
+    {
+        PdfExportProperties exportProperties = new PdfExportProperties();
+        exportProperties.FileName = "Vendor_List.pdf";
+        vendorGrid.ExportToPdfAsync(exportProperties);
+    }
 }
