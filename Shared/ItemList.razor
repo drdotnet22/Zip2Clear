@@ -8,8 +8,9 @@
 @inject MyDbContext context
 @inject SfDialogService DialogService
 
-<SfGrid DataSource="@itemList" AllowFiltering="true">
-    <GridEvents CommandClicked="ActionBeginHandler" TValue="Item"></GridEvents>
+<SfGrid DataSource="@itemList" AllowFiltering="true" @ref="itemGrid" AllowPaging="true" AllowSorting="true" Toolbar="@toolbar">
+    <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Item"></GridEvents>
+    <GridEditSettings AllowAdding="@editable" AllowDeleting="@editable" AllowEditOnDblClick="@editable" AllowEditing="@editable" ShowConfirmDialog="false"></GridEditSettings>
     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
     <GridColumns>
         @if (invoice == null)
@@ -22,11 +23,10 @@
         <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Description" ForeignDataSource="@tariffList" ForeignKeyValue="Name"></GridForeignColumn>
         <GridColumn Field="@nameof(Item.Value)" HeaderText="Value"></GridColumn>
         <GridColumn Field="@nameof(Item.Weight)" HeaderText="Weight"></GridColumn>
-        <GridColumn Field="Tariff.Uom.Code" HeaderText="Uom"></GridColumn>
-        <GridColumn Field="@nameof(Item.UomValue)" HeaderText="Uom Value"></GridColumn>
-        <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="General Rate" ForeignDataSource="@tariffList" ForeignKeyValue="GeneralRate"></GridForeignColumn>
-        <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Excise Rate" ForeignDataSource="@tariffList" ForeignKeyValue="ExciseRate"></GridForeignColumn>
-        <GridColumn>
+        <GridColumn Field="Tariff.Uom.Code" HeaderText="Uom" AllowEditing="false" AllowAdding="false"></GridColumn>
+        <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="General Rate" ForeignDataSource="@tariffList" ForeignKeyValue="GeneralRate" AllowEditing="false" AllowAdding="false"></GridForeignColumn>
+        <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Excise Rate" ForeignDataSource="@tariffList" ForeignKeyValue="ExciseRate" AllowEditing="false" AllowAdding="false"></GridForeignColumn>
+        <GridColumn AllowEditing="false" AllowAdding="false">
             <GridCommandColumns>
                 <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-delete", CssClass="e-flat" })"></GridCommandColumn>
             </GridCommandColumns>
@@ -41,12 +41,15 @@
     [CascadingParameter]
     protected Invoice invoice { get; set; }
 
-    private IEnumerable<Item> itemList;
+    SfGrid<Item> itemGrid;
+    public List<Item> itemList { get; set; }
     private IEnumerable<Uom> uomList;
     private IEnumerable<Tariff> tariffList;
     private IEnumerable<Invoice> invoiceList;
     private IEnumerable<Vendor> vendorList;
     private IEnumerable<Department> departments;
+    private List<string> toolbar;
+    private bool editable;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,12 +66,15 @@
                                 .Include(i => i.Invoice.Vendor)
                                 .Where(i => i.Invoice.Declaration == declaration)
                                 .ToListAsync();
+            editable = false;
         }
         else if (invoice != null)
         {
             itemList = await context.Item
                                 .Where(i => i.Invoice == invoice)
                                 .ToListAsync();
+            editable = true;
+            toolbar = new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
         }
         else
         {
@@ -76,6 +82,7 @@
                                 .Include(i => i.Tariff)
                                 .Include(i => i.Invoice)
                                 .ToListAsync();
+            editable = false;
         }
 
         uomList = await context.Uom.ToListAsync();
@@ -86,17 +93,47 @@
         await base.OnInitializedAsync();
     }
 
-    public async void ActionBeginHandler(CommandClickEventArgs<Item> args)
+    private void ActionBeginHandler(ActionEventArgs<Item> Args)
     {
-        if (args.CommandColumn.Type == CommandButtonType.Delete)
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
-            bool isConfirm = await DialogService.ConfirmAsync($"Are you sure you want to permanently delete the item named {args.RowData.Tariff.Name}?", "Delete Item?");
-            if (isConfirm == true)
+            if (Args.Action == "Add")
             {
-                context.Remove(args.RowData);
+                Args.Data.ItemId = Guid.NewGuid();
+                context.Item.Add(Args.Data);
                 context.SaveChanges();
                 RefreshItemList();
             }
+            else if (Args.Action == "Edit")
+            {
+                try
+                {
+                    var itemExists = context.Item.Find(Args.Data.ItemId);
+                    if (itemExists != null)
+                    {
+                        context.Entry(itemExists).State = EntityState.Detached;
+                        context.Item.Update(Args.Data);
+                        context.SaveChanges();
+                        RefreshItemList();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                
+            }
         }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            context.Item.Remove(Args.Data);
+            context.SaveChanges();
+            RefreshItemList();
+        }
+    }
+
+    private void CellSaveHandler(CellSaveArgs<Item> args)
+    {
+        itemGrid.EndEditAsync();
     }
 }

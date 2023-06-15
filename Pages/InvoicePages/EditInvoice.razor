@@ -2,243 +2,50 @@
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
-@using Radzen
-@using Syncfusion.Blazor.Cards
-@using Syncfusion.Blazor.Inputs
-@using Syncfusion.Blazor.DropDowns
-@using Syncfusion.Blazor.Calendars
-@using Syncfusion.Blazor.Buttons
-@using Syncfusion.Blazor.Grids
 
-@inject Radzen.DialogService DialogService
-@inject NavigationManager NavigationManager
-@inject InvoiceServices invoiceService
 @inject MyDbContext dbContext
+@inject NavigationManager NavigationManager
 
-@if (!newInv)
-{
-    <h3>@invoice.Vendor?.Name #@invoice.Number</h3>
-}
-@if (!editable)
-{
-    <SfButton OnClick="Edit">Edit</SfButton>
-}
-
-<div style="width:fit-content">
-    <div class="row">
-        <div style="width:auto">
-            <SfTextBox Placeholder="Invoice Number" FloatLabelType="FloatLabelType.Auto" @bind-Value="invoice.Number" @ref=firstEle Enabled="editable" ></SfTextBox>
-        </div>
-        <div style="width:auto">
-            <SfAutoComplete TValue="Vendor" TItem="Vendor" Placeholder="Vendor" FloatLabelType="FloatLabelType.Auto"
-                    DataSource="vendors" @bind-Value="invoice.Vendor" Autofill="true" Enabled="editable" >
-                <AutoCompleteFieldSettings Value="Name"/>
-            </SfAutoComplete>
-        </div>
-        <div style="width:auto">
-            <SfDatePicker TValue="DateTime" Placeholder="Date" FloatLabelType="FloatLabelType.Auto" ShowClearButton="false" @bind-Value="invoice.Date" Enabled="editable"></SfDatePicker>
-        </div>
-    </div>
-    <div class="row">
-        <div style="width:auto">
-            <SfNumericTextBox TValue="decimal" @bind-Value="invoice.Shipping" Placeholder="Shipping"
-                              FloatLabelType="FloatLabelType.Auto" ShowSpinButton="false" Enabled="editable"></SfNumericTextBox>
-        </div>
-        <div style="width:auto">
-            <SfNumericTextBox TValue="decimal" @bind-Value="invoice.Insurance" Placeholder="Insurance/BOL freight"
-                              FloatLabelType="FloatLabelType.Auto" ShowSpinButton="false" Enabled="editable"></SfNumericTextBox>
-        </div>
-    </div>
-</div>
-
-@if (newInv)
-{
-    <SfButton OnClick="@SaveNewInvoice">Save</SfButton>
-}
-         
-@if (!newInv)
-{
-    <SfButton OnClick="@AddItemDialog" Disabled="!editable">Add Item</SfButton>
-    @*<SfGrid DataSource="@itemList" >
-        <GridColumns>
-            <GridColumn Field="@nameof(Item.Quantity)" HeaderText="Quantity"></GridColumn>
-            <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Description" ForeignDataSource="tariffList" ForeignKeyValue="Name"></GridForeignColumn>
-            <GridColumn Field="@nameof(Item.Value)" HeaderText="Value"></GridColumn>
-            <GridColumn Field="@nameof(Item.Weight)" HeaderText="Weight"></GridColumn>
-        </GridColumns>
-    </SfGrid>*@
-    <CascadingValue Value="invoice">
-        <ItemList/>
-    </CascadingValue>
-
-    <br/><br/>
-    <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom">
-        <button class="btn btn-primary" @onclick="(() => UpdateInvoice())">Save</button>
-        <button class="btn btn-secondary" @onclick="(() => Cancel())">Cancel</button>
-        <button class="btn btn-danger" @onclick="(() => DeleteInvoice())">Delete</button>
-    </Div>
-}
+<CascadingValue Value="invoice" >
+    <_1Invoice Close="CloseInvoice"/>
+</CascadingValue>
 
 @code {
     [Parameter]
     public string? InvoiceId { get; set; }
 
-    bool newInv = false;
-    bool editable;
-    public IEnumerable<Vendor> vendors;
-    public IEnumerable<Tariff> tariffList;
-    public IEnumerable<Item> itemList;
-    public string selectedTariff { get; set; }
-    RadzenDataGrid<Item> itemsGrid;
-    Item itemToInsert;
-
+    
     private List<Invoice> Invoices;
 
     public Invoice invoice { get; set; } = new Invoice();
 
     protected override async Task OnInitializedAsync()
     {
-        vendors = await dbContext.Vendor.ToListAsync();
-        tariffList = await dbContext.Tariff.ToListAsync();
         if (InvoiceId == "new")
         {
-            editable = true;
-            newInv = true;
             invoice.InvoiceId = Guid.NewGuid();
             invoice.Date = DateTime.Now;
         }
         else
         {
-            editable = false;
             await LoadInvoiceAsync();
-            RefreshItems();
         }
 
         await base.OnInitializedAsync();
     }
 
-    private SfTextBox? firstEle;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            firstEle.FocusAsync();
-        }
-    }
-
-    private void Edit()
-    {
-        editable = true;
-    }
-
-    private async Task RefreshItems()
-    {
-        itemList = dbContext.Item.Where(i => i.InvoiceId == invoice.InvoiceId).Include(i => i.Invoice).Include(i => i.Tariff).ToList();
-    }
-
-    private async Task SaveNewInvoice()
-    {
-        await invoiceService.AddInvoiceAsync(invoice);
-        newInv = false;
-    }
-
+    
     private async Task LoadInvoiceAsync()
     {
         Invoices = await dbContext.Invoice.Include(i => i.Vendor).ToListAsync();
         invoice = Invoices.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
     }
 
-    private async Task UpdateInvoice()
+    public void CloseInvoice(string action)
     {
-        if (newInv == true)
+        if (action == "CloseInvoice")
         {
-            await invoiceService.AddInvoiceAsync(invoice);
+            NavigationManager.NavigateTo("/invoices");
         }
-        else
-        {
-            await invoiceService.UpdateInvoiceAsync(invoice);
-        }
-        NavigationManager.NavigateTo("/invoices");
-    }
-
-    private async Task DeleteInvoice()
-    {
-        await invoiceService.DeleteInvoiceAsync(invoice);
-        NavigationManager.NavigateTo("/invoices");
-    } 
-
-    private async Task Cancel()
-    {
-        NavigationManager.NavigateTo("/invoices");
-    }
-
-    #region DataGrid row edit
-    void OnCreateItemRow(Item item)
-    {
-        dbContext.Item.Add(item);
-        item.ItemId = Guid.NewGuid();
-
-        //for demo
-        item.UomValue = 15;
-        item.Invoice = invoice;
-
-        dbContext.SaveChanges();
-    }
-
-    void OnUpdateItemRow(Item item)
-    {
-        if (item == itemToInsert)
-        {
-            itemToInsert = null;
-        }
-
-        dbContext.Item.Update(item);
-        dbContext.SaveChanges();
-    }
-
-    async Task InsertItemRow()
-    {
-        itemToInsert = new Item();
-        await itemsGrid.InsertRow(itemToInsert);
-    }
-
-    async Task SaveItemRow(Item item)
-    {
-        if (item == itemToInsert)
-        {
-            itemToInsert = null;
-        }
-        await itemsGrid.UpdateRow(item);
-    }
-
-    void CancelItemEdit(Item item)
-    {
-        if (item == itemToInsert)
-        {
-            itemToInsert = null;
-        }
-
-        itemsGrid.CancelEditRow(item);
-
-        var itemEntry = dbContext.Entry(item);
-        if (itemEntry.State == EntityState.Modified)
-        {
-            itemEntry.CurrentValues.SetValues(itemEntry.OriginalValues);
-            itemEntry.State = EntityState.Unchanged;
-        }
-    }
-    #endregion
-
-    public void Dispose()
-    {
-    }
-
-    public async Task AddItemDialog()
-    {
-        await DialogService.OpenAsync<Shared.NewItem>("New Item",
-               new Dictionary<string, object>() { { "InvoiceId", invoice.InvoiceId.ToString() } },
-               new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
-
-        await RefreshItems();
     }
 }
