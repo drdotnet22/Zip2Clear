@@ -12,7 +12,7 @@
 <h3>Tariff List</h3>
 <div>
     <label style="padding: 10px 24px 10px 0">Editable</label>
-    <SfCheckBox @bind-Checked="@editable"></SfCheckBox>
+    <SfSwitch @bind-Checked="@editable"></SfSwitch>
 </div>
 <SfButton OnClick="exportPDF">Export PDF</SfButton>
 <br/><br/>
@@ -42,7 +42,6 @@
         <GridColumn Field="@nameof(Tariff.ExciseRate)" HeaderText="Excise Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
     </GridColumns>
 </SfGrid>
-
 
 
 @code {

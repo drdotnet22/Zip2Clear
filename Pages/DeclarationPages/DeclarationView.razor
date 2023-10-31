@@ -3,6 +3,7 @@
 @inherits LayoutComponentBase
 
 @using Zip2Clear.Data
+@using Zip2Clear.Pages
 @using Microsoft.EntityFrameworkCore
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Navigations
@@ -13,6 +14,7 @@
 @inject InvoiceServices invoiceService
 @inject ItemServices itemService
 @inject MyDbContext dbContext
+@inject NavigationManager NavigationManager
 
 <h3>DeclarationView</h3>
 
@@ -44,6 +46,7 @@
                 <br/>
                 <br/>
                 <SfGrid DataSource="@invoices" AllowPaging="true">
+                    <GridEvents OnRecordDoubleClick="InvoiceDoubleClickHandler" TValue="Invoice" ></GridEvents>
                     <GridColumns>
                         <GridColumn Field="@nameof(Invoice.Number)" HeaderText="Invoice Number" ></GridColumn>
                         <GridForeignColumn Field="@nameof(Invoice.VendorId)" ForeignKeyValue="Name" ForeignDataSource="@vendors"></GridForeignColumn>
@@ -73,6 +76,16 @@
         <Content>
             <CascadingValue Value="declaration">
                 <UnassignedInvoices OnClick="CloseUnassignedInvoiceDialog" />
+            </CascadingValue>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<SfDialog ShowCloseIcon="false" @bind-Visible="invDialogVisible" AllowPrerender="false">
+    <DialogTemplates>
+        <Content>
+            <CascadingValue Value="clickedInvoice">
+                <_1Invoice Close="CloseInvoiceDialog"/>
             </CascadingValue>
         </Content>
     </DialogTemplates>
@@ -130,6 +143,22 @@
             RefreshInvoices();
         }
     }
+
+    private bool invDialogVisible = false;
+
+    public void OpenInvoiceDialog()
+    {
+        this.invDialogVisible = true;
+    }
+
+    public void CloseInvoiceDialog(string action)
+    {
+        if (action == "CloseDialog")
+        {
+            this.invDialogVisible = false;
+            RefreshInvoices();
+        }
+    }
     #endregion
     #region Invoice Grid
     async Task DeleteInvoiceRow(Invoice invoice)
@@ -138,6 +167,13 @@
         dbContext.SaveChanges();
         await RefreshInvoices();
         await invoiceGrid.Reload(); 
+    }
+
+    public Invoice clickedInvoice;
+    public void InvoiceDoubleClickHandler(RecordDoubleClickEventArgs<Invoice> args)
+    {
+        clickedInvoice = args.RowData;
+        OpenInvoiceDialog();
     }
 
     async Task UnassignInvoice(Invoice invoice)
