@@ -59,11 +59,11 @@
     {
         if (declaration != null)
         {
-            Invoices = context.Invoice.Where(i => i.Declaration == declaration).Include(i => i.Vendor).ToList();
+            Invoices = invoiceService.GetInvoicesByDeclarationAsync(declaration);
         }
         else
         {
-            Invoices = context.Invoice.Include("Vendor").ToList();
+            Invoices = invoiceService.GetInvoiceAsync();
         }
     }
 
