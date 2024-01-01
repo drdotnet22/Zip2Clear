@@ -27,6 +27,15 @@ namespace Zip2Clear.Data
         }
 
         /// <summary>
+        /// This method returns the list of invoices in a declaration
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Invoice>> GetInvoicesByDeclarationAsync(Declaration declaration)
+        {
+            return await dbContext.Invoice.Where(i => i.Declaration == declaration).Include(i => i.Vendors).ToListAsync();
+        }
+
+        /// <summary>
         /// This method add a new product to the DbContext and saves it
         /// </summary>
         /// <param name="invoice"></param>
