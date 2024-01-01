@@ -21,7 +21,7 @@ namespace Zip2Clear.Data
         /// This method returns the list of invoice
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Invoice>> GetInvoiceAsync()
+        public async Task<IList<Invoice>> GetInvoiceAsync()
         {
             return await dbContext.Invoice.Include(i => i.Vendor).ToListAsync();
         }
@@ -30,7 +30,7 @@ namespace Zip2Clear.Data
         /// This method returns the list of invoices in a declaration
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Invoice>> GetInvoicesByDeclarationAsync(Declaration declaration)
+        public async Task<IList<Invoice>> GetInvoicesByDeclarationAsync(Declaration declaration)
         {
             return await dbContext.Invoice.Where(i => i.Declaration == declaration).Include(i => i.Vendor).ToListAsync();
         }

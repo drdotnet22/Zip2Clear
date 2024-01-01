@@ -18,7 +18,7 @@ builder.Services.AddServerSideBlazor();
 
 // Register Syncfusion license
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjgxNjA5QDMyMzAyZTMyMmUzMFZnNlJrdTUyYWFNMGZEK1NWVXdkMXFzMTJYSVJBVVpaL1kvOFIwakRMaTQ9");
-builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+builder.Services.AddSyncfusionBlazor();
 
 builder.Services.AddScoped<SfDialogService>();
 

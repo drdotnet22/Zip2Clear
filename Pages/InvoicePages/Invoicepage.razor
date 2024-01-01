@@ -46,7 +46,7 @@
     [CascadingParameter]
     protected Declaration declaration { get; set; }
 
-    IList<Invoice> Invoices;
+    public IList<Invoice> Invoices { get; set; }
     private Invoice selectedInvoice;
 
     protected override async Task OnInitializedAsync()
@@ -59,11 +59,11 @@
     {
         if (declaration != null)
         {
-            Invoices = invoiceService.GetInvoicesByDeclarationAsync(declaration);
+            Invoices = await invoiceService.GetInvoicesByDeclarationAsync(declaration);
         }
         else
         {
-            Invoices = invoiceService.GetInvoiceAsync();
+            Invoices = await invoiceService.GetInvoiceAsync();
         }
     }
 
