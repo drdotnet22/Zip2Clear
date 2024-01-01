@@ -32,7 +32,7 @@ namespace Zip2Clear.Data
         /// <returns></returns>
         public async Task<List<Invoice>> GetInvoicesByDeclarationAsync(Declaration declaration)
         {
-            return await dbContext.Invoice.Where(i => i.Declaration == declaration).Include(i => i.Vendors).ToListAsync();
+            return await dbContext.Invoice.Where(i => i.Declaration == declaration).Include(i => i.Vendor).ToListAsync();
         }
 
         /// <summary>
