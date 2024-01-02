@@ -94,6 +94,18 @@ namespace Zip2Clear.Data
                 throw;
             }
         }
+
+        public async Task<decimal> CalculateInvoiceTotalAsync(Invoice invoice)
+        {
+            decimal invoiceTotal = 0;
+            IEnumerable<Item> itemsInInvoice = dbContext.Item.Where(i => i.Invoice == invoice).ToList();
+            foreach (Item item in itemsInInvoice)
+            {
+                invoiceTotal += item.Value;
+            }
+            invoiceTotal += invoice.Shipping;
+            return invoiceTotal;
+        }
         #endregion
     }
 }
