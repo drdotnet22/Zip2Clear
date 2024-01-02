@@ -57,6 +57,10 @@ namespace Zip2Clear.Data
         public double? UomValue { get; set; }
         public Guid TariffId { get; set; }
         public Tariff Tariff { get; set; }
+        public string TariffCode { get; set; }
+        public decimal TariffGeneralRate { get; set; }
+        public decimal TariffExciseRate { get; set; }
+        public decimal EnvironmentalLevy { get; set; }
         public Guid? DepartmentId { get; set; }
         public Department? Department { get; set; }
     }
@@ -65,7 +69,7 @@ namespace Zip2Clear.Data
     #region Vendor class
     public class Vendor
     {
-        public Guid VendorId { get; set; }
+        [Key] public Guid VendorId { get; set; }
         public string Name { get; set; }
         public string AddressLine { get; set; }
         public string? CityName { get; set; }
@@ -80,9 +84,10 @@ namespace Zip2Clear.Data
     {
         public Guid TariffId { get; set; }
         public string Name { get; set; }
-        public double Number { get; set; }
-        public double GeneralRate { get; set; }
-        public double ExciseRate { get; set; }
+        public string Code { get; set; }
+        public decimal GeneralRate { get; set; }
+        public decimal ExciseRate { get; set; }
+        public decimal EnvironmentalLevy { get; set; }
         public Guid? UomId { get; set; }
         public Uom Uom { get; set; }
     }
@@ -93,7 +98,9 @@ namespace Zip2Clear.Data
     {
         public Guid DepartmentId { get; set; }
         public string Code { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
+        public bool IsActive { get; set; }
     }
     #endregion
 

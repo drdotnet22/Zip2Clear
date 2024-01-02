@@ -58,8 +58,8 @@ namespace Zip2Clear.Data
         {
             return new List<Department>
             {
-                new Department { DepartmentId = Guid.NewGuid(), Code = "MM", Email = "mmf.lr@emypeople.net" },
-                new Department { DepartmentId = Guid.NewGuid(), Code = "MS", Email = "mms.lr@emypeople.net" }
+                new Department { DepartmentId = Guid.NewGuid(), Code = "MM", Name = "Mennonite Mission", Email = "mmf.lr@emypeople.net", IsActive = true },
+                new Department { DepartmentId = Guid.NewGuid(), Code = "MS", Name = "Mechanic Shop", Email = "mms.lr@emypeople.net", IsActive = true }
             };
         }
         #endregion

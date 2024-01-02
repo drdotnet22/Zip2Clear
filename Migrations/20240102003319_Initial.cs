@@ -3,10 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Zip2Clear.Migrations
 {
-    public partial class InitialCommit : Migration
+    /// <inheritdoc />
+    public partial class Initial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -47,7 +51,9 @@ namespace Zip2Clear.Migrations
                 {
                     DepartmentId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Code = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +77,7 @@ namespace Zip2Clear.Migrations
                 name: "Vendor",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    VendorId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     AddressLine = table.Column<string>(type: "TEXT", nullable: false),
                     CityName = table.Column<string>(type: "TEXT", nullable: true),
@@ -81,7 +87,7 @@ namespace Zip2Clear.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vendor", x => x.Id);
+                    table.PrimaryKey("PK_Vendor", x => x.VendorId);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,9 +96,10 @@ namespace Zip2Clear.Migrations
                 {
                     TariffId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Number = table.Column<double>(type: "REAL", nullable: false),
-                    GeneralRate = table.Column<double>(type: "REAL", nullable: false),
-                    ExciseRate = table.Column<double>(type: "REAL", nullable: false),
+                    Code = table.Column<string>(type: "TEXT", nullable: false),
+                    GeneralRate = table.Column<decimal>(type: "TEXT", nullable: false),
+                    ExciseRate = table.Column<decimal>(type: "TEXT", nullable: false),
+                    EnvironmentalLevy = table.Column<decimal>(type: "TEXT", nullable: false),
                     UomId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -129,7 +136,7 @@ namespace Zip2Clear.Migrations
                         name: "FK_Invoice_Vendor_VendorId",
                         column: x => x.VendorId,
                         principalTable: "Vendor",
-                        principalColumn: "Id",
+                        principalColumn: "VendorId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -144,6 +151,10 @@ namespace Zip2Clear.Migrations
                     Weight = table.Column<double>(type: "REAL", nullable: true),
                     UomValue = table.Column<double>(type: "REAL", nullable: true),
                     TariffId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    TariffCode = table.Column<string>(type: "TEXT", nullable: false),
+                    TariffGeneralRate = table.Column<decimal>(type: "TEXT", nullable: false),
+                    TariffExciseRate = table.Column<decimal>(type: "TEXT", nullable: false),
+                    EnvironmentalLevy = table.Column<decimal>(type: "TEXT", nullable: false),
                     DepartmentId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -171,47 +182,32 @@ namespace Zip2Clear.Migrations
             migrationBuilder.InsertData(
                 table: "Declaration",
                 columns: new[] { "DeclarationId", "BOLnumber", "CountryOfDestination", "CountryOfOrigin", "CreatedDate", "DeclarationNumber", "DeclarationOffice", "Exporter", "Importer", "ManifestNumber", "ModeOfTransport", "PortOfEntry", "PortOfExit", "Regime", "Status", "Submitted", "SubmittedDate", "TotalGrossMassMeasureQnty", "TotalGrossMassMeasureUOM", "TotalPackageQnty", "TotalPackageQntyUOM", "Type" },
-                values: new object[] { new Guid("00002a06-f731-4e07-b3e1-d861dc50c1a3"), "PEVMOB005096", "BS", "US", new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2507), "2022DEC0000845474", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2509), 40.0, "LB", 1.0, "EA", "400" });
-
-            migrationBuilder.InsertData(
-                table: "Declaration",
-                columns: new[] { "DeclarationId", "BOLnumber", "CountryOfDestination", "CountryOfOrigin", "CreatedDate", "DeclarationNumber", "DeclarationOffice", "Exporter", "Importer", "ManifestNumber", "ModeOfTransport", "PortOfEntry", "PortOfExit", "Regime", "Status", "Submitted", "SubmittedDate", "TotalGrossMassMeasureQnty", "TotalGrossMassMeasureUOM", "TotalPackageQnty", "TotalPackageQntyUOM", "Type" },
-                values: new object[] { new Guid("3235faef-c77f-44c2-be06-de6e118f15a2"), "PEVMOB005095", "BS", "US", new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2468), "2022DEC0000845484", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2022, 7, 26, 8, 23, 45, 543, DateTimeKind.Local).AddTicks(2500), 390.0, "LB", 1.0, "EA", "400" });
-
-            migrationBuilder.InsertData(
-                table: "Department",
-                columns: new[] { "DepartmentId", "Code", "Email" },
-                values: new object[] { new Guid("280cc0e9-1a04-4e17-b0ff-8c0323130ac8"), "MM", "mmf.lr@emypeople.net" });
+                values: new object[,]
+                {
+                    { new Guid("41b254a2-b09f-4012-a467-e1b9ad2e3d17"), "PEVMOB005095", "BS", "US", new DateTime(2024, 1, 1, 19, 33, 19, 102, DateTimeKind.Local).AddTicks(1941), "2022DEC0000845484", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2024, 1, 1, 19, 33, 19, 102, DateTimeKind.Local).AddTicks(1990), 390.0, "LB", 1.0, "EA", "400" },
+                    { new Guid("b0db578f-b858-48f6-8b40-de0b26c0baa2"), "PEVMOB005096", "BS", "US", new DateTime(2024, 1, 1, 19, 33, 19, 102, DateTimeKind.Local).AddTicks(1998), "2022DEC0000845474", "SAQPDK", "Mennonite Messianic Mission", "Mennonite Messianic Mission", "MSTRNO30613", "1", "SAQ", "USPVS", "4", "Compliance", true, new DateTime(2024, 1, 1, 19, 33, 19, 102, DateTimeKind.Local).AddTicks(2000), 40.0, "LB", 1.0, "EA", "400" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Department",
-                columns: new[] { "DepartmentId", "Code", "Email" },
-                values: new object[] { new Guid("5be5061a-f276-4b56-9092-87b9926a48c6"), "MS", "mms.lr@emypeople.net" });
+                columns: new[] { "DepartmentId", "Code", "Email", "IsActive", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("19904b65-4819-4254-8878-95cea9b0fe84"), "MM", "mmf.lr@emypeople.net", true, "Mennonite Mission" },
+                    { new Guid("553ba773-8996-40cb-9df8-e4b4f893a46c"), "MS", "mms.lr@emypeople.net", true, "Mechanic Shop" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Vendor",
-                columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("0fb26ff2-3493-41b5-bf5d-461f663c4dc6"), "1301 SW 2ND ST", "POMPANO BEACH", "US", "ROADWAY TIRES", "33069", "FL" });
-
-            migrationBuilder.InsertData(
-                table: "Vendor",
-                columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("1258df26-234d-4074-8f5d-3da2e5f21035"), "12029 W DOPHIN CT", "HOMOSASSA", "US", "AGRIVET", "34448", "FL" });
-
-            migrationBuilder.InsertData(
-                table: "Vendor",
-                columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("167247cf-24f4-4a53-8ba3-dfad500207aa"), "4300 STEWART ROAD", "LAKELAND", "US", "MONTE PACKAGE", "33815", "FL" });
-
-            migrationBuilder.InsertData(
-                table: "Vendor",
-                columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("65ead5dc-18d2-45fe-ae24-841fc7527784"), "2968 RAVENSWOOD ROAD", "FORT LAUDERDALE", "US", "TPH", "33312", "FL" });
-
-            migrationBuilder.InsertData(
-                table: "Vendor",
-                columns: new[] { "Id", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
-                values: new object[] { new Guid("ddffb366-2e8a-43ef-8cc0-4f9d4fadc95d"), "PO BOX 1723", "OKEECHOBEE", "US", "WALPOLE FEED", "34973", "FL" });
+                columns: new[] { "VendorId", "AddressLine", "CityName", "CountryCode", "Name", "PostalCode", "State" },
+                values: new object[,]
+                {
+                    { new Guid("6e294201-0187-4aea-bc8b-3f63a7758806"), "1301 SW 2ND ST", "POMPANO BEACH", "US", "ROADWAY TIRES", "33069", "FL" },
+                    { new Guid("7363e105-0bcd-4e89-9fb6-f125f2045479"), "PO BOX 1723", "OKEECHOBEE", "US", "WALPOLE FEED", "34973", "FL" },
+                    { new Guid("75114055-ec83-4765-aa48-168b7c3d1c70"), "4300 STEWART ROAD", "LAKELAND", "US", "MONTE PACKAGE", "33815", "FL" },
+                    { new Guid("754f58fa-cc4c-4951-897f-f068462a2b2c"), "2968 RAVENSWOOD ROAD", "FORT LAUDERDALE", "US", "TPH", "33312", "FL" },
+                    { new Guid("eed01065-5c18-4691-bea2-c0c31176eef7"), "12029 W DOPHIN CT", "HOMOSASSA", "US", "AGRIVET", "34448", "FL" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_DeclarationId",
@@ -244,6 +240,7 @@ namespace Zip2Clear.Migrations
                 column: "UomId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
