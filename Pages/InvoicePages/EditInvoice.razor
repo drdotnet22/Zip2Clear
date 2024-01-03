@@ -7,6 +7,8 @@
 @inject InvoiceServices invoiceService
 @inject NavigationManager NavigationManager
 
+@* This is in a mess but the plan is to copy all the code over from InvoiceList.razor instead of embedding it. *@
+
 <h3>@invoice.Vendor?.Name #@invoice.Number</h3>
 <CascadingValue Value="invoice" >
     <InvoiceList Close="CloseInvoice"/>
