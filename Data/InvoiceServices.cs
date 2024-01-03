@@ -21,7 +21,7 @@ namespace Zip2Clear.Data
         /// This method returns the list of invoice
         /// </summary>
         /// <returns></returns>
-        public async Task<IList<Invoice>> GetInvoiceAsync()
+        public async Task<IList<Invoice>> GetInvoiceListAsync()
         {
             return await dbContext.Invoice.Include(i => i.Vendor).ToListAsync();
         }

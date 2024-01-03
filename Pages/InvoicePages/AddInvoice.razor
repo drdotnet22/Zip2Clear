@@ -39,6 +39,16 @@
     <br />
     <div class="input-group">
         <div class="input-group-prepend">
+            <span class="input-group-text">Department:</span>
+        </div>
+        <Autocomplete TItem="Department" TValue="string" Data="@departmentList" ValueField="@(( d ) => d.Code)" TextField="@(( d ) => d.Code)"
+                      @bind-SelectedValue=@selectedDepartment Filter="AutocompleteFilter.Contains">
+            <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
+        </Autocomplete>
+    </div>
+    <br />
+    <div class="input-group">
+        <div class="input-group-prepend">
             <span class="input-group-text">Shipping and Handling:</span>
         </div>
         <input class="form-control" @bind="NewInvoice.Shipping" />
@@ -52,38 +62,7 @@
     </div>
 </SfCard>
 
-<SfCard ID="">
-    <Fields>
-        <Field>
-            <FieldLabel>Department</FieldLabel>
-            <Autocomplete TItem="Department" TValue="string" Data="@departmentList" ValueField="@(( d ) => d.Code)" TextField="@(( d ) => d.Code)"
-                    @bind-SelectedValue=@selectedDepartment Filter="AutocompleteFilter.Contains">
-                <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
-            </Autocomplete>
-        </Field>
-        <Field>
-            <FieldLabel>Quantity</FieldLabel>
-            <NumericEdit TValue="double" />
-        </Field>
-        <Field>
-            <FieldLabel>Description</FieldLabel>
-            <Autocomplete TItem="Tariff" TValue="string" Data="@tarifList" ValueField="@(( t ) => t.Name)" TextField="@(( t ) => t.Name)"
-                          @bind-SelectedValue=@selectedTariff Filter="AutocompleteFilter.Contains" >
-                <NotFoundContent>Sorry... @context was not found! :( </NotFoundContent>
-            </Autocomplete>
-        </Field>
-        <Field>
-            <FieldLabel>Value</FieldLabel>
-            <NumericEdit TValue="double" />
-        </Field>
-        <Field>
-            <FieldLabel>Weight (LB)</FieldLabel>
-            <NumericEdit TValue="double" />
-        </Field>
-    </Fields>
-</SfCard>
-
-<RadzenCard Visible="invoiceSaved">
+@* <RadzenCard Visible="invoiceSaved">
     <RadzenButton Icon="add_circle_outline" style="width:fit-content" ButtonStyle="Radzen.ButtonStyle.Primary" Text="New Item" Click="@InsertItemRow" Disabled=@(itemToInsert != null) />
     <RadzenDataGrid TItem="Item" Data="@items" RowCreate="@OnCreateItemRow" RowUpdate="OnUpdateItemRow" @ref="itemsGrid" 
             AllowFiltering="true" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single" >
@@ -128,7 +107,7 @@
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
-</RadzenCard>
+</RadzenCard> *@
 
 <RadzenCard Style="width:fit-content" Visible="@saveInvVis" >
     <p>

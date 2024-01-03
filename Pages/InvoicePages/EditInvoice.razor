@@ -4,20 +4,20 @@
 @using Microsoft.EntityFrameworkCore
 
 @inject MyDbContext dbContext
+@inject InvoiceServices invoiceService
 @inject NavigationManager NavigationManager
 
+<h3>@invoice.Vendor?.Name #@invoice.Number</h3>
 <CascadingValue Value="invoice" >
     <InvoiceList Close="CloseInvoice"/>
 </CascadingValue>
 
 @code {
     [Parameter]
-    public string? InvoiceId { get; set; }
+    public string InvoiceId { get; set; }
 
-    
-    private List<Invoice> Invoices;
 
-    public Invoice invoice { get; set; } = new Invoice();
+    public Invoice invoice { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -34,11 +34,10 @@
         await base.OnInitializedAsync();
     }
 
-    
+
     private async Task LoadInvoiceAsync()
     {
-        Invoices = await dbContext.Invoice.Include(i => i.Vendor).ToListAsync();
-        invoice = Invoices.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
+        invoice = await dbContext.Invoice.FirstOrDefaultAsync(i => i.InvoiceId.ToString() == InvoiceId);
     }
 
     public void CloseInvoice(string action)
