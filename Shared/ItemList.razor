@@ -18,7 +18,6 @@
             <GridForeignColumn Field="@nameof(Item.InvoiceId)" HeaderText="Invoice Number" ForeignDataSource="@invoiceList" ForeignKeyValue="Number"></GridForeignColumn>
             <GridColumn Field="Invoice.Vendor.Name" HeaderText="Vendor"></GridColumn>
         }
-        <GridForeignColumn Field="@nameof(Item.DepartmentId)" HeaderText="Department" ForeignDataSource="@departments" ForeignKeyValue="Code"></GridForeignColumn>
         <GridColumn Field="@nameof(Item.Quantity)" HeaderText="Quantity"></GridColumn>
         <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Description" ForeignDataSource="@tariffList" ForeignKeyValue="Name"></GridForeignColumn>
         <GridColumn Field="@nameof(Item.Value)" HeaderText="Value"></GridColumn>

@@ -32,11 +32,6 @@
             <FieldLabel>UOM: Code is @item.Tariff?.Uom.Code</FieldLabel>
             <NumericEdit TValue="double?" @bind-Value="item.UomValue" />
         </Field>
-        <Field>
-            <FieldLabel>Department</FieldLabel>
-            <Autocomplete TItem="Department" TValue="Department" Data="departmentList" ValueField="@(( departments ) => departments)"
-                TextField="@(( departments ) => departments.Code)" @bind-SelectedValue="@item.Department" />
-        </Field>
     </Fields>
 </Div>
 

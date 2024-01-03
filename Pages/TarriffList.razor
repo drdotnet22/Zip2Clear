@@ -40,6 +40,7 @@
         </GridColumn>
         <GridColumn Field="@nameof(Tariff.GeneralRate)" HeaderText="General Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Tariff.ExciseRate)" HeaderText="Excise Rate" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
+        <GridColumn Field="@nameof(Tariff.EnvironmentalLevy)" HeaderText="Environmental Levy" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
     </GridColumns>
 </SfGrid>
 
@@ -66,7 +67,6 @@
     {
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
-            Console.WriteLine(Args.Action);
             if (Args.Action == "Add")
             {
                 Args.Data.TariffId = Guid.NewGuid();

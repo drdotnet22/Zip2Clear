@@ -23,7 +23,7 @@ namespace Zip2Clear.Data
         public async Task<decimal> CalculateProcessingFeeAsync(Declaration declaration, Department department)
         {
             IEnumerable<Item> itemsInDeclaration = dbContext.Item.Where(i => i.Invoice.Declaration == declaration).Include(i => i.Invoice).ToList();
-            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Department == department);
+            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Invoice.Department == department);
             decimal processingFee = 0;
             if (itemsInDeclaration.Any())
             {
@@ -48,7 +48,7 @@ namespace Zip2Clear.Data
         public async Task<decimal> CalculateEnvironmentalLevyAsync(Declaration declaration, Department department)
         {
             IEnumerable<Item> itemsInDeclaration = dbContext.Item.Where(i => i.Invoice.Declaration == declaration).Include(i => i.Invoice).ToList();
-            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Department == department);
+            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Invoice.Department == department);
             decimal environmentalLevyTotal = 0;
             foreach (Item item in itemsByDepartment)
             {
@@ -60,7 +60,7 @@ namespace Zip2Clear.Data
         public async Task<decimal> CalculateShippingOnDepartmentBill(Declaration declaration, Department department)
         {
             IEnumerable<Item> itemsInDeclaration = dbContext.Item.Where(i => i.Invoice.Declaration == declaration).Include(i => i.Invoice).ToList();
-            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Department == department);
+            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Invoice.Department == department);
             decimal shippingOnDepartmentItems = 0;
             foreach (Item item in itemsByDepartment)
             {
@@ -73,7 +73,7 @@ namespace Zip2Clear.Data
         public async Task<DepartmentBillValues> CalculateDepartmentBill(Declaration declaration, Department department)
         {
             IEnumerable<Item> itemsInDeclaration = dbContext.Item.Where(i => i.Invoice.Declaration == declaration).Include(i => i.Invoice).ToList();
-            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Department == department);
+            IEnumerable<Item> itemsByDepartment = itemsInDeclaration.Where(i => i.Invoice.Department == department);
             
             //Total of items
             decimal itemsTotal = 0;
@@ -122,9 +122,10 @@ namespace Zip2Clear.Data
     }
     public class DepartmentBillValues()
     {
-        public decimal Shipping {  get; set; }
-        public decimal EnvironmentalLevy {  get; set; }
+        public decimal Shipping { get; set; }
+        public decimal EnvironmentalLevy { get; set; }
         public decimal ProcessingFee { get; set; }
         public decimal VAT { get; set; }
         public decimal Total { get; set; }
+    }
 }

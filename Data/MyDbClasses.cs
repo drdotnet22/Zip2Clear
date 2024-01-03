@@ -42,6 +42,8 @@ namespace Zip2Clear.Data
         public Vendor Vendor { get; set; }
         public decimal Shipping { get; set; }
         public decimal Insurance { get; set; }
+        public Guid? DepartmentId { get; set; }
+        public Department? Department { get; set; }
     }
     #endregion
 
@@ -61,8 +63,6 @@ namespace Zip2Clear.Data
         public decimal TariffGeneralRate { get; set; }
         public decimal TariffExciseRate { get; set; }
         public decimal EnvironmentalLevy { get; set; }
-        public Guid? DepartmentId { get; set; }
-        public Department? Department { get; set; }
     }
     #endregion
 
