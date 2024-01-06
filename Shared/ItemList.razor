@@ -25,7 +25,7 @@
         <GridColumn Field="Tariff.Uom.Code" HeaderText="Uom" AllowEditing="false" AllowAdding="false"></GridColumn>
         <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="General Rate" ForeignDataSource="@tariffList" ForeignKeyValue="GeneralRate" AllowEditing="false" AllowAdding="false"></GridForeignColumn>
         <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Excise Rate" ForeignDataSource="@tariffList" ForeignKeyValue="ExciseRate" AllowEditing="false" AllowAdding="false"></GridForeignColumn>
-        <GridColumn AllowEditing="false" AllowAdding="false">
+        <GridColumn AllowEditing="false" AllowAdding="false" Visible="editable">
             <GridCommandColumns>
                 <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-delete", CssClass="e-flat" })"></GridCommandColumn>
             </GridCommandColumns>

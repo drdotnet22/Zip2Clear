@@ -1,4 +1,4 @@
-﻿@page "/invoices/{InvoiceId}"
+﻿@page "/invoice/{InvoiceId}/edit"
 
 @using Zip2Clear.Data
 @using Microsoft.EntityFrameworkCore
@@ -7,8 +7,6 @@
 @inject InvoiceServices invoiceService
 @inject VendorServices vendorService
 @inject NavigationManager NavigationManager
-
-@* This is in a mess but the plan is to copy all the code over from InvoicePage.razor instead of embedding it. *@
 
 <h3>@invoice.Vendor?.Name #@invoice.Number</h3>
 
@@ -41,6 +39,10 @@
 
 <SfButton OnClick="@AddItemDialog" >Add Item</SfButton>
 
+<CascadingValue Value="invoice">
+    <ItemList/>
+</CascadingValue>
+
 <SfDialog ShowCloseIcon="true" AllowPrerender="true" AllowDragging="true" @bind-Visible="addItemDialogVisible">
     <DialogTemplates>
         <Header>Add items</Header>
@@ -58,7 +60,6 @@
 
     public Invoice invoice { get; set; }
     public IEnumerable<Vendor> vendors;
-    public IEnumerable<Item> items;
 
     protected override async Task OnInitializedAsync()
     {
