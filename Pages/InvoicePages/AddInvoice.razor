@@ -13,55 +13,43 @@
 <h3>New Invoice</h3>
 
 <SfCard Style="width:500px">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">Invoice Number:</span>
-        </div>
-        <input class="form-control" @ref="firstEle" @bind="NewInvoice.Number" />
+    <div class="row">
+        <SfTextBox @bind-Value="NewInvoice.Number" Placeholder="Invoice number" FloatLabelType="FloatLabelType.Auto" />
     </div>
     <br />
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text" >Vendor:</span>
-        </div>
-        <SfAutoComplete TValue="Vendor" TItem="Vendor" DataSource="vendors" @bind-Value="NewInvoice.Vendor" Autofill="true">
+    <div class="row">
+        <SfAutoComplete TValue="Vendor" TItem="Vendor" DataSource="vendors" @bind-Value="NewInvoice.Vendor" Autofill="true" Placeholder="Vendor" FloatLabelType="FloatLabelType.Auto">
             <AutoCompleteFieldSettings Value="Name"/>
         </SfAutoComplete>
+        <SfButton IsPrimary="true" IconCss="e-btn-sb-icons e-add-icon" CssClass="e-small e-round e-flat" OnClick="OpenNewVendorDialog" tabindex="-1"/>
     </div>
     <br />
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text" >Invoice Date:</span>
-        </div>
+    <div class="row">
         <SfDatePicker @bind-Value="invDate" />
     </div>
     <br />
     <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">Department:</span>
-        </div>
         <SfAutoComplete TValue="Department" TItem="Department" DataSource="departmentList" @bind-Value="NewInvoice.Department" Autofill="true">
             <AutoCompleteFieldSettings Value="Code"/>
         </SfAutoComplete>
     </div>
     <br />
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">Shipping and Handling:</span>
-        </div>
-        <input class="form-control" @bind="NewInvoice.Shipping" />
-    </div>
-    <br />
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">Insurance/BOL freight:</span>
-        </div>
-        <input class="form-control" @bind="NewInvoice.Insurance" />
+    <div class="row">
+        <SfNumericTextBox TValue="decimal" @bind-Value="NewInvoice.Shipping" Placeholder="Shipping" FloatLabelType="FloatLabelType.Auto" />
     </div>
 </SfCard>
 
 <button tabindex="0" class="btn btn-info" @onclick="AddNewInvoice"> Save Invoice</button>
 <a tabindex="0" href="/invoices" class="btn btn-secondary">Cancel</a>
+
+<SfDialog @bind-Visible="newVendorDialogVisible" ShowCloseIcon="true" Width="250" AllowPrerender="false">
+    <DialogTemplates>
+        <Header>Add new vendor</Header>
+        <Content>
+            <Zip2Clear.Pages.Vendors.AddVendor />
+        </Content>
+    </DialogTemplates>
+</SfDialog>
 
         
 @code {
@@ -72,6 +60,8 @@
 
     public IEnumerable<Vendor> vendors;
     public IEnumerable<Department> departmentList;
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,4 +96,12 @@
     {
         NotificationService.Notify(message);
     }
+
+    #region
+    private bool newVendorDialogVisible = false;
+    public async Task OpenNewVendorDialog()
+    {
+        this.newVendorDialogVisible = true;
+    }
+    #endregion
 }
