@@ -44,6 +44,10 @@ namespace Zip2Clear.Data
         {
             try
             {
+                if (invoice.Shipping == null)
+                {
+                    invoice.Shipping = 0;
+                }
                 dbContext.Invoice.Add(invoice);
                 await dbContext.SaveChangesAsync();
             }
