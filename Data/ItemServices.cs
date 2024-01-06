@@ -34,6 +34,10 @@ namespace Zip2Clear.Data
         {
             try
             {
+                item.TariffCode = item.Tariff.Code;
+                item.TariffGeneralRate = item.Tariff.GeneralRate;
+                item.TariffExciseRate = item.Tariff.ExciseRate;
+                item.EnvironmentalLevy = item.Tariff.EnvironmentalLevy;
                 dbContext.Item.Add(item);
                 await dbContext.SaveChangesAsync();
             }
@@ -56,6 +60,10 @@ namespace Zip2Clear.Data
                 var itemExist = dbContext.Item.FirstOrDefault(p => p.ItemId == item.ItemId);
                 if (itemExist != null)
                 {
+                    item.TariffCode = item.Tariff.Code;
+                    item.TariffGeneralRate = item.Tariff.GeneralRate;
+                    item.TariffExciseRate = item.Tariff.ExciseRate;
+                    item.EnvironmentalLevy = item.Tariff.EnvironmentalLevy;
                     dbContext.Update(item);
                     await dbContext.SaveChangesAsync();
                 }
