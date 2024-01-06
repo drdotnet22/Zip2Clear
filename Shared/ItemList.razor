@@ -19,7 +19,13 @@
             <GridColumn Field="Invoice.Vendor.Name" HeaderText="Vendor"></GridColumn>
         }
         <GridColumn Field="@nameof(Item.Quantity)" HeaderText="Quantity"></GridColumn>
-        <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Description" ForeignDataSource="@tariffList" ForeignKeyValue="Name"></GridForeignColumn>
+        <GridForeignColumn Field="@nameof(Item.TariffId)" HeaderText="Description" ForeignDataSource="@tariffList" ForeignKeyValue="Name">
+            <EditTemplate>
+                <SfAutoComplete TValue="Tariff" TItem="Tariff" DataSource="tariffList" @bind-Value="@((context as Item).Tariff)" Autofill="true">
+                    <AutoCompleteFieldSettings Value="Name" />
+                </SfAutoComplete>
+            </EditTemplate>
+        </GridForeignColumn>
         <GridColumn Field="@nameof(Item.Value)" HeaderText="Value"></GridColumn>
         <GridColumn Field="@nameof(Item.Weight)" HeaderText="Weight"></GridColumn>
         <GridColumn Field="Tariff.Uom.Code" HeaderText="Uom" AllowEditing="false" AllowAdding="false"></GridColumn>
