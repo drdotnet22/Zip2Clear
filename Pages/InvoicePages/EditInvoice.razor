@@ -5,34 +5,65 @@
 
 @inject MyDbContext dbContext
 @inject InvoiceServices invoiceService
+@inject VendorServices vendorService
 @inject NavigationManager NavigationManager
 
-@* This is in a mess but the plan is to copy all the code over from InvoiceList.razor instead of embedding it. *@
+@* This is in a mess but the plan is to copy all the code over from InvoicePage.razor instead of embedding it. *@
 
 <h3>@invoice.Vendor?.Name #@invoice.Number</h3>
-<CascadingValue Value="invoice" >
-    <InvoiceList Close="CloseInvoice"/>
-</CascadingValue>
+
+<div style="width:fit-content">
+    <div class="row">
+        <div style="width:auto">
+            <SfTextBox Placeholder="Invoice Number" FloatLabelType="FloatLabelType.Auto" @bind-Value="invoice.Number" @ref=firstEle ></SfTextBox>
+        </div>
+        <div style="width:auto">
+            <SfAutoComplete TValue="Vendor" TItem="Vendor" Placeholder="Vendor" FloatLabelType="FloatLabelType.Auto"
+                    DataSource="vendors" @bind-Value="invoice.Vendor" Autofill="true" >
+                <AutoCompleteFieldSettings Value="Name"/>
+            </SfAutoComplete>
+        </div>
+        <div style="width:auto">
+            <SfDatePicker TValue="DateTime" Placeholder="Date" FloatLabelType="FloatLabelType.Auto" ShowClearButton="false" @bind-Value="invoice.Date" ></SfDatePicker>
+        </div>
+    </div>
+    <div class="row">
+        <div style="width:auto">
+            <SfNumericTextBox TValue="decimal" @bind-Value="invoice.Shipping" Placeholder="Shipping"
+                              FloatLabelType="FloatLabelType.Auto" ShowSpinButton="false" ></SfNumericTextBox>
+        </div>
+        <div style="width:auto">
+            <SfNumericTextBox TValue="decimal" @bind-Value="invoice.Insurance" Placeholder="Insurance/BOL freight"
+                              FloatLabelType="FloatLabelType.Auto" ShowSpinButton="false" ></SfNumericTextBox>
+        </div>
+    </div>
+</div>
+
+<SfButton OnClick="@AddItemDialog" >Add Item</SfButton>
+
+<SfDialog ShowCloseIcon="true" AllowPrerender="true" AllowDragging="true" @bind-Visible="addItemDialogVisible">
+    <DialogTemplates>
+        <Header>Add items</Header>
+        <Content>
+            <CascadingValue Value="invoice">
+                <NewItem OnClick="CloseAddItemDialog" />
+            </CascadingValue>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
 
 @code {
     [Parameter]
     public string InvoiceId { get; set; }
 
-
     public Invoice invoice { get; set; }
+    public IEnumerable<Vendor> vendors;
+    public IEnumerable<Item> items;
 
     protected override async Task OnInitializedAsync()
     {
-        if (InvoiceId == "new")
-        {
-            invoice.InvoiceId = Guid.NewGuid();
-            invoice.Date = DateTime.Now;
-        }
-        else
-        {
-            await LoadInvoiceAsync();
-        }
-
+        vendors = await vendorService.GetVendorAsync();
+        await LoadInvoiceAsync();
         await base.OnInitializedAsync();
     }
 
@@ -49,4 +80,29 @@
             NavigationManager.NavigateTo("/invoices");
         }
     }
+
+    private SfTextBox? firstEle;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            firstEle.FocusAsync();
+        }
+    }
+
+    #region Dialog
+    private bool addItemDialogVisible = false;
+    public async Task AddItemDialog()
+    {
+        this.addItemDialogVisible = true;
+    }
+
+    public void CloseAddItemDialog(string action)
+    {
+        if (action == "CloseDialog")
+        {
+            this.addItemDialogVisible = false;
+        }
+    }
+    #endregion
 }

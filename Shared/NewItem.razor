@@ -3,6 +3,7 @@
 
 @inject Radzen.DialogService DialogService
 @inject Zip2Clear.Data.MyDbContext dbContext
+@inject ItemServices itemService
 
 <h3>New Item</h3>
 <Div Flex="Flex.JustifyContent.Start" Margin="Margin.Is3.FromBottom">
@@ -40,22 +41,18 @@
 <Button Class="btn btn-danger" Clicked="CancelAndClose" >Cancel and Close</Button>
 
 
-@code {
-    [Parameter] public string InvoiceId { get; set; }
+    @code {
+    [Parameter] public Invoice invoice { get; set; }
 
+    [Parameter]
+    public EventCallback<string> OnClick { get; set; }
 
-    private Invoice invoice;
     private Item item { get; set; }
     private IEnumerable<Tariff> tariffList;
-    private IEnumerable<Invoice> invoiceList;
-    private IEnumerable<Department> departmentList;
 
     protected override async Task OnInitializedAsync()
     {
-        invoiceList = await dbContext.Invoice.ToListAsync();
-        invoice = invoiceList.FirstOrDefault(i => i.InvoiceId.ToString() == InvoiceId);
         tariffList = await dbContext.Tariff.Include(t => t.Uom).ToListAsync();
-        departmentList = await dbContext.Department.ToListAsync();
         AddItem();
     }
 
@@ -69,22 +66,22 @@
     private Blazorise.NumericEdit<double> qntyEle;
     private async Task SaveAndNew()
     {
-        dbContext.Item.Add(item);
-        await dbContext.SaveChangesAsync();
+        await itemService.AddItemAsync(item);
         AddItem();
         qntyEle.Focus();
     }
 
     private async Task SaveAndClose()
     {
-        dbContext.Item.Add(item);
-        await dbContext.SaveChangesAsync();
+        await itemService.AddItemAsync(item);
         DialogService.Close(true);
+        await OnClick.InvokeAsync("CloseDialog");
     }
 
     private async Task CancelAndClose()
     {
-        DialogService.Close(true);
+        item = null;
+        await OnClick.InvokeAsync("CloseDialog");
     }
 
     private async Task OnTariffSet()
