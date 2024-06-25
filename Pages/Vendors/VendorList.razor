@@ -6,19 +6,20 @@
 @using Microsoft.EntityFrameworkCore
 
 @inject MyDbContext dbContext
+@inject VendorServices vendorService
 
 
 <SfButton OnClick="exportPDF">Export PDF</SfButton>
 <br/><br/>
 <SfGrid DataSource="@vendors" Toolbar="@(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel", "Search" })" AllowPaging="true" AllowPdfExport="true" @ref="vendorGrid" RowHeight="40"
-    AllowFiltering="true" AllowSorting="true" >
+    AllowSorting="true" >
     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" ShowConfirmDialog="false"></GridEditSettings>
     <GridEvents OnActionBegin="ActionBeginHandler" CellSaved="CellSaveHandler" TValue="Vendor"></GridEvents>
     <GridColumns>
         <GridColumn Field="@nameof(Vendor.Name)" HeaderText="Name" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Vendor.AddressLine)" HeaderText="Address Line" ValidationRules="@(new ValidationRules{ Required=true })"></GridColumn>
         <GridColumn Field="@nameof(Vendor.CityName)" HeaderText="City" ></GridColumn>
-        <GridColumn Field="@nameof(Vendor.State)" HeaderText="State"></GridColumn>
+        <GridColumn Field="@nameof(Vendor.State)" HeaderText="State" ValidationRules="@(new ValidationRules{ MaxLength=3 })"></GridColumn>
         <GridColumn Field="@nameof(Vendor.PostalCode)" HeaderText="Postal Code"></GridColumn>
         <GridColumn Field="@nameof(Vendor.CountryCode)" HeaderText="Country" DefaultValue="@("US")"></GridColumn>
     </GridColumns>
@@ -38,7 +39,7 @@
 
     private async Task GetVendors()
     {
-        vendors = dbContext.Vendor.ToList();
+        vendors = await vendorService.GetVendorAsync();
     }
 
     private void ActionBeginHandler(ActionEventArgs<Vendor> Args)
@@ -48,34 +49,24 @@
             if (Args.Action == "Add")
             {
                 Args.Data.VendorId = Guid.NewGuid();
-                dbContext.Vendor.Add(Args.Data);
-                dbContext.SaveChanges();
-                GetVendors();
+                vendorService.AddVendorAsync(Args.Data);
             }
             else if (Args.Action == "Edit")
             {
                 try
                 {
-                    var vendorExists = dbContext.Vendor.Find(Args.Data.VendorId);
-                    if (vendorExists != null)
-                    {
-                        dbContext.Entry(vendorExists).State = EntityState.Detached;
-                        dbContext.Vendor.Update(Args.Data);
-                        dbContext.SaveChanges();
-                        GetVendors();
-                    }
+                    vendorService.UpdateVendorAsync(Args.Data);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-                
+
             }
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
-            dbContext.Vendor.Remove(Args.Data);
-            dbContext.SaveChanges();
+            vendorService.DeleteVendorAsync(Args.Data);
             GetVendors();
         }
     }
