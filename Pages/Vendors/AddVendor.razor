@@ -1,6 +1,4 @@
-﻿@page "/vendors/new"
-
-@using Zip2Clear.Data
+﻿@inject VendorServices vendorService
 
 <h3>New Vendor</h3>
 <br/>
@@ -8,83 +6,62 @@
     <div class="input-group-prepend">
         <span class="input-group-text">Vendor Name:</span>
     </div>
-    <input class="form-control" @ref="firstEle" @bind="NewVendor.Name" />  
+    <input class="form-control" @bind="newVendor.Name" />  
 </div>
 <br />
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Address line:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.AddressLine" />
+    <input class="form-control" @bind="newVendor.AddressLine" />
 </div>
 <br />
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">City:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.CityName" />
+    <input class="form-control" @bind="newVendor.CityName" />
 </div>
 <br />
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">State:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.State" />  
+    <input class="form-control" @bind="newVendor.State" />  
 </div>
 <br/>
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Postal code:</span>
     </div>
-    <input class="form-control" @bind="NewVendor.PostalCode" />  
+    <input class="form-control" @bind="newVendor.PostalCode" />  
 </div>
 <br/>
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">Country:</span>
     </div>
-    <input tabindex="1" class="form-control" @bind="NewVendor.CountryCode" />  
+    <input tabindex="1" class="form-control" @bind="newVendor.CountryCode" />  
 </div>
 <br />
-<a tabindex="0" class="btn btn-info" @onclick="AddNewVendor" href="/vendors"> Save Vendor</a>
-<a tabindex="0" href="/vendors" class="btn btn-secondary">Cancel</a>
-
-
-
-
+<a tabindex="0" class="btn btn-info" @onclick="AddNewVendor" > Save Vendor</a>
+<a tabindex="0" class="btn btn-secondary">Cancel</a>
         
 @code {
-    [Inject]
-    public VendorServices vendorService { get; set; }
+    [Parameter]
+    public EventCallback<string> OnClick { get; set; }
 
-    private ElementReference firstEle;
+    public Vendor newVendor { get; set; } = new Vendor() { CountryCode = "US" };
 
-    List<Vendor> Vendors = new List<Vendor>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RefreshVendors();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await firstEle.FocusAsync();
-        }
-    }
-
-    private async Task RefreshVendors()
-    {
-        Vendors = await vendorService.GetVendorAsync();
-    }
-
-    public Vendor NewVendor { get; set; } = new Vendor() { CountryCode = "US" };
     private async Task AddNewVendor()
     {
-        NewVendor.VendorId = Guid.NewGuid();
-        await vendorService.AddVendorAsync(NewVendor);
-        NewVendor = new Vendor();
-        await RefreshVendors();
+        newVendor.VendorId = Guid.NewGuid();
+        await vendorService.AddVendorAsync(newVendor);
+        await OnClick.InvokeAsync("CloseDialog");
+    }
+
+    private async Task Cancel()
+    {
+        await OnClick.InvokeAsync("CloseDialog");
     }
 }

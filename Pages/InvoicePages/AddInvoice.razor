@@ -21,7 +21,7 @@
         <SfAutoComplete TValue="Vendor" TItem="Vendor" DataSource="vendors" @bind-Value="NewInvoice.Vendor" Autofill="true" Placeholder="Vendor" FloatLabelType="FloatLabelType.Auto">
             <AutoCompleteFieldSettings Value="Name"/>
         </SfAutoComplete>
-        <SfButton IsPrimary="true" IconCss="e-btn-sb-icons e-add-icon" CssClass="e-small e-round e-flat" OnClick="OpenNewVendorDialog" tabindex="-1"/>
+        <SfButton IsPrimary="true" IconCss="e-btn-sb-icons e-add-icon" CssClass="e-small e-round e-flat" OnClick="OpennewVendorDialog" tabindex="-1"/>
     </div>
     <br />
     <div class="row">
@@ -46,7 +46,7 @@
     <DialogTemplates>
         <Header>Add new vendor</Header>
         <Content>
-            <Zip2Clear.Pages.Vendors.AddVendor />
+            <Zip2Clear.Pages.Vendors.AddVendor OnClick="CloseNewVendorDialog" />
         </Content>
     </DialogTemplates>
 </SfDialog>
@@ -99,9 +99,17 @@
 
     #region
     private bool newVendorDialogVisible = false;
-    public async Task OpenNewVendorDialog()
+    public async Task OpennewVendorDialog()
     {
         this.newVendorDialogVisible = true;
+    }
+
+    public void CloseNewVendorDialog(string action)
+    {
+        if (action == "CloseDialog")
+        {
+            this.newVendorDialogVisible = false;
+        }
     }
     #endregion
 }
